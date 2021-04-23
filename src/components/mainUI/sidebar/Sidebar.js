@@ -43,7 +43,7 @@ export default function Sidebar({open, handleDrawerClose, handleDrawerOpen}) {
         >
             <div className={classes.list}>
                 <div className={classes.toolbar}>
-                    <h3>Jars Invetory</h3>
+                    <h3>Jars Inventory</h3>
                 </div>
                 <Divider/>
                 <List>
