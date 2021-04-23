@@ -126,7 +126,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="supplier-email"
                                    label="Supplier Email"
@@ -140,7 +140,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="address"
                                    label="Home Address"
@@ -154,7 +154,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="city"
                                    label="City"
@@ -168,7 +168,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="state"
                                    label="State"
@@ -182,7 +182,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="postal"
                                    label="postal code"
@@ -196,7 +196,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="mobile-no"
                                    label="Mobile No."
@@ -210,7 +210,7 @@ const SupplierRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="telNo"
                                    label="Telephone No."

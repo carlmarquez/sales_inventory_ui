@@ -11,7 +11,6 @@ import {
 import {useState} from "react";
 import {Axios} from "../../../utils/axios/Axios";
 import {storeInsert} from "../../../utils/ServerEndPoint";
-import {Alert, AlertTitle} from "@material-ui/lab";
 import Response from "../../../utils/Response/Response";
 
 
@@ -19,7 +18,7 @@ const StoreRegister = (
     {
         closeDialog,
         dialog,
-        insertData
+        Reload
 
     }) => {
 
@@ -67,7 +66,7 @@ const StoreRegister = (
         }
 
         Axios.post(storeInsert, data).then(e => {
-            insertData(data)
+            Reload()
             setName('')
             setEmail('')
             setAddress('')
@@ -129,7 +128,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="store-email"
                                    label="Store Email"
@@ -143,7 +142,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="address"
                                    label="Home Address"
@@ -157,7 +156,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="city"
                                    label="City"
@@ -171,7 +170,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="state"
                                    label="State"
@@ -185,7 +184,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="postal"
                                    label="postal code"
@@ -199,7 +198,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="mobile-no"
                                    label="Mobile No."
@@ -213,7 +212,7 @@ const StoreRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    id="telNo"
                                    label="Telephone No."

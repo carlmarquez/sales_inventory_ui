@@ -8,21 +8,21 @@ import {
     Grid,
     TextField
 } from "@material-ui/core"
-import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
-import {productDelete} from "../../../utils/ServerEndPoint";
-import Response from "../../../utils/Response/Response";
+import {useState} from "react"
+import {Axios} from "../../../utils/axios/Axios"
+import {storeDelete} from "../../../utils/ServerEndPoint"
+import Response from "../../../utils/Response/Response"
 
-
-const DeleteProduct = (
+const StoreDelete = (
     {
         closeDialog,
         dialog,
-        deleteProduct
+        Reload
     }) => {
 
-    const [qty, setQty] = useState(1)
-    const [code, setCode] = useState('')
+
+    // user data
+    const [email, setEmail] = useState('')
 
 
     // for snack bar
@@ -30,24 +30,20 @@ const DeleteProduct = (
     const [error, setError] = useState(false)
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
-
     const close = () => {
         setShow(false)
     }
 
 
     const register = (event) => {
+
+
         event.preventDefault()
 
-        const data = {
-            code,
-            qty: parseInt(qty)
-        }
-
-        Axios.post(productDelete, data).then(e => {
-            setError(false)
+        Axios.post(storeDelete, {email}).then(ignored => {
+            setEmail('')
             setShow(true)
-            deleteProduct(data)
+            Reload()
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)
@@ -57,54 +53,42 @@ const DeleteProduct = (
 
 
     }
+
     return <Dialog
         open={dialog}
         onClose={closeDialog}
         aria-labelledby="add-student"
-        maxWidth={"md"}
+        maxWidth={"sm"}
         fullWidth
     >
-        <form  onSubmit={register}>
+        <form onInvalid onSubmit={register}>
 
 
-            <DialogTitle id="add-student">Delete Product</DialogTitle>
+            <DialogTitle id="add-student">Remove Store</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Delete Product Note
+                    Insert Supplier Email to delete the supplier
                 </DialogContentText>
-
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
                           showSnackBar={show}
-                          successMessage='Product Deleted Success'
+                          successMessage='Store Deleted Success'
                           closeSnackBar={close}
                 />
 
                 <Grid container spacing={1}>
-
-                    <Grid item md={6} xs={12}>
+                    <Grid item md={12} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Product Code"
+                                   label="Email"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
-                                   value={code}
-                                   onChange={e => setCode(e.target.value)}
+                                   value={email}
+                                   onChange={(e) => setEmail(e.target.value)}
                         />
-                    </Grid>
 
-                    <Grid item md={6} xs={12}>
-                        <TextField
-                                   margin="dense"
-                                   label="QTY"
-                                   type="number"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={qty}
-                                   onChange={e => setQty(e.target.value < 0? 1: e.target.value)}
-                        />
                     </Grid>
 
                 </Grid>
@@ -112,10 +96,10 @@ const DeleteProduct = (
 
             <DialogActions>
 
-                <Button type={"submit"} color='secondary'onClick={register}>
+                <Button type={"submit"} color='secondary' onClick={register}>
                     Delete
                 </Button>
-                <Button onClick={() => closeDialog(false)} color='primary'  >
+                <Button onClick={() => closeDialog(false)} color='primary' >
                     Cancel
                 </Button>
             </DialogActions>
@@ -124,4 +108,4 @@ const DeleteProduct = (
 }
 
 
-export default DeleteProduct
+export default StoreDelete

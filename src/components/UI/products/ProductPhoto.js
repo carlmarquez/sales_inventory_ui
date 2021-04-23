@@ -16,8 +16,8 @@ import {Alert, AlertTitle} from "@material-ui/lab";
 const SupplierRegister = (
     {
         closeDialog,
-        dialog
-
+        dialog,
+        insertPicture
     }) => {
 
     const [file, setFile] = useState(0)
@@ -43,6 +43,7 @@ const SupplierRegister = (
         Axios.post(productPhoto, formData).then(ignored => {
             setError(false)
             setShow(true)
+            insertPicture()
         }).catch(ignored => {
             setError(true)
         })

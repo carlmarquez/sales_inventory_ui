@@ -5,20 +5,21 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle, FormControl,
-    Grid, Snackbar,
+    Grid,
     TextField
 } from "@material-ui/core"
 import {useEffect, useState} from "react";
 import {Axios} from "../../../utils/axios/Axios";
-import {productDelete, storeList} from "../../../utils/ServerEndPoint";
-import {Alert, AlertTitle, Autocomplete} from "@material-ui/lab";
+import {productTransfer, storeList} from "../../../utils/ServerEndPoint";
+import {Autocomplete} from "@material-ui/lab";
+import Response from "../../../utils/Response/Response";
 
 
 const TransferProduct = (
     {
         closeDialog,
         dialog,
-        insertData
+        transfer
     }) => {
 
 
@@ -27,13 +28,14 @@ const TransferProduct = (
 
     const [qty, setQty] = useState(1)
     const [code, setCode] = useState('')
-    const [store, setStore] = useState()
+    const [store, setStore] = useState(null)
 
 
     // for snack bar
     const [show, setShow] = useState(false)
     const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState()
+    const [errorTitle, setErrorTitle] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
 
     const close = () => {
         setShow(false)
@@ -41,30 +43,35 @@ const TransferProduct = (
 
 
     const register = (event) => {
-        event.preventDefault()
 
+        event.preventDefault()
+        if(store === null){
+            alert("Please insert store to transfer")
+            return
+        }
         const data = {
             code,
-            qty: parseInt(qty)
+            qty: parseInt(qty),
+            storeID: store.id
         }
 
-        Axios.post(productDelete, data).then(e => {
+        Axios.post(productTransfer, data).then(e => {
             setError(false)
             setShow(true)
+            transfer()
         }).catch(error => {
             const response = error.response.data
-            setErrorMessage(response)
+            setErrorMessage(response.message)
+            setErrorTitle(response.title)
             setError(true)
         })
 
 
     }
-    useEffect(async () => {
+    useEffect(() => {
         Axios.get(storeList).then(e => {
             setStores(e.data)
         })
-
-
     }, [])
     return <Dialog
         open={dialog}
@@ -73,7 +80,7 @@ const TransferProduct = (
         maxWidth={"md"}
         fullWidth
     >
-        <form  onSubmit={register}>
+        <form onSubmit={register}>
 
 
             <DialogTitle id="add-student">Transfer Product</DialogTitle>
@@ -82,24 +89,13 @@ const TransferProduct = (
                     Transfer Product To Another Branch
                 </DialogContentText>
 
-                {
-                    error ? <Alert variant="filled" severity="error">
-                        <AlertTitle><strong>{errorMessage.name}</strong></AlertTitle>
-                        <strong>{errorMessage.message}</strong>
-                    </Alert> : null
-                }
-
-                <br/>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    open={show} autoHideDuration={3000} onClose={close}>
-                    <Alert onClose={closeDialog} severity="success">
-                        Product Register Success
-                    </Alert>
-                </Snackbar>
+                <Response showError={error}
+                          errorTitle={errorTitle}
+                          errorMessage={errorMessage}
+                          showSnackBar={show}
+                          successMessage='Product Transfer Success'
+                          closeSnackBar={close}
+                />
 
                 <Grid container spacing={1}>
 
@@ -117,13 +113,13 @@ const TransferProduct = (
 
                     <Grid item md={4} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="QTY"
-                                   type="number"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={qty}
-                                   onChange={e => setQty(e.target.value < 0? 1: e.target.value)}
+                            margin="dense"
+                            label="QTY"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            value={qty}
+                            onChange={e => setQty(e.target.value < 0 ? 1 : e.target.value)}
                         />
                     </Grid>
 
@@ -145,10 +141,10 @@ const TransferProduct = (
 
             <DialogActions>
 
-                <Button type={"submit"} color='secondary'onClick={register}>
-                    Delete
+                <Button type={"submit"} color='primary' onClick={register}>
+                    Transfer
                 </Button>
-                <Button onClick={() => closeDialog(false)} color='primary'  >
+                <Button onClick={() => closeDialog(false)} color='secondary'>
                     Cancel
                 </Button>
             </DialogActions>

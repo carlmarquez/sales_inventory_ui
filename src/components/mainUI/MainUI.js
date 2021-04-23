@@ -61,6 +61,7 @@ export default function MainUI({user}) {
                             <Route exact path={"/stores"}>
                                 <StoreBranch/>
                             </Route>
+
                             <Route path={"/sales"}>
                                 <Sales/>
                             </Route>

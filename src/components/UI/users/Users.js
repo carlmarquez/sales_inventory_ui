@@ -6,7 +6,7 @@ import {Axios} from '../../../utils/axios/Axios'
 import {useEffect, useState,Fragment} from "react";
 import Typography from "@material-ui/core/Typography";
 import UserRegister from "./UserRegister";
-import {userList} from "../../../utils/ServerEndPoint";
+import {storeList, userList} from "../../../utils/ServerEndPoint";
 import DeleteUser from "./DeleteUser";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -14,55 +14,50 @@ import IconButton from "@material-ui/core/IconButton";
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled'
 import UpdateIcon from '@material-ui/icons/Update'
+import UpdateUser from "./UpdateUser";
 export const Users = () => {
     const classes = style()
 
     const [dialog, setDialog] = useState(false);
     const [data,setData] = useState([])
     const [loading, setLoading] = useState(false)
+    const [updateUserDialog, setUpdateUserDialog] = useState(false)
+    const [deleteUserDialog, setDeleteUserDialog] = useState(false)
 
-
-    const [deleteUser, setDeleteUser] = useState(false)
-
+    // for auto compelte
+    const [stores, setStore] = useState([])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async ()  => {
+    useEffect( ()  => {
+        Reload().then(ignored => {})
+    }, [])
 
+
+    const Reload = async () => {
         setLoading(true)
 
-        const wew = async () => {
-            return await Axios.get(userList)
-        }
-
-        // create data temp so our state will not mutate
         const item = []
 
-        await wew().then(e => {
+        await Axios.get(userList).then(e => {
             e.data.map(user =>
                 item.push(insert(user.id,user.email,user.firstName,user.lastName,user.role, user.Store.name, user.status))
             )
-        }).catch(error => {
-            console.log(error)
         })
 
-        setData(...data, item)
+        await Axios.get(storeList).then(e => {
+            setStore(e.data)
+        })
+
+        setData(item)
         setLoading(false)
-
-    }, [])
-
-    const insertData = (user) => {
-        const newData = [user,...data]
-        setData(newData)
-    }
-
-    const deleted = (email) => {
-        const temp = data.filter(e=> e.email !== email)
-        setData(temp)
     }
 
     return (
         <Fragment>
-            <DeleteUser deleted={deleted} dialog={deleteUser} closeDialog={() => setDeleteUser(false)}/>
-            <UserRegister dialog={dialog} closeDialog={() => setDialog(false)}  insertData={insertData}/>
+            <DeleteUser Reload={Reload} dialog={deleteUserDialog} closeDialog={() => setDeleteUserDialog(false)}/>
+            <UserRegister stores={stores} dialog={dialog} closeDialog={() => setDialog(false)}  Reload={Reload}/>
+            <UpdateUser stores={stores} dialog={updateUserDialog} closeDialog={() => setUpdateUserDialog(false)}  Reload={Reload}/>
+
+
             <Grid component="main" className={classes.root}>
                 <Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
                     <Toolbar>
@@ -75,14 +70,14 @@ export const Users = () => {
                             </Tooltip>
 
                             <Tooltip title="Remove User" aria-label="add">
-                                <IconButton  onClick={() => setDeleteUser(true)} aria-label="addProduct"
+                                <IconButton  onClick={() => setDeleteUserDialog(true)} aria-label="addProduct"
                                             color={"secondary"}>
                                     <PersonAddDisabledIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title="Update User" aria-label="add">
-                                <IconButton onClick={() => setDialog(true)} aria-label="addProduct"
+                                <IconButton onClick={() => setUpdateUserDialog(true)} aria-label="addProduct"
                                             color={"primary"}>
                                     <UpdateIcon fontSize={"large"}/>
                                 </IconButton>

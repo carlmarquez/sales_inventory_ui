@@ -1,3 +1,3 @@
 export{
-    StoreBranch
+    default as StoreBranch
 }from './StoreBranch'

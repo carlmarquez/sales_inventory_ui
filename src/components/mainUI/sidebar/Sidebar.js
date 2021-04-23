@@ -3,11 +3,17 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import {ListItem, ListItemIcon, ListItemText, SwipeableDrawer} from "@material-ui/core";
 import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
 import {makeStyles} from '@material-ui/core/styles';
 import {NavLink} from "react-router-dom";
 
+import TimelineIcon from '@material-ui/icons/Timeline';
+import StoreIcon from '@material-ui/icons/Store';
+import ReceiptIcon from '@material-ui/icons/Receipt';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import GroupIcon from '@material-ui/icons/Group';
+import ComputerIcon from '@material-ui/icons/Computer';
 const useStyles = makeStyles({
     list: {
         width: 240,
@@ -45,49 +51,49 @@ export default function Sidebar({open, handleDrawerClose, handleDrawerOpen}) {
                         {/*<ListSubheader className={style} inset>TEACHER</ListSubheader>*/}
                         <ListItem component={NavLink} to="/products" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <SettingsCellIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Products"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/users" button>
                             <ListItemIcon>
-                                <BarChartIcon/>
+                                <AccountCircleIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Users"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/stores" button>
                             <ListItemIcon>
-                                <LayersIcon/>
+                                <StoreIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Stores"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/sales" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <TimelineIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Sales"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/transaction" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <ReceiptIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Transaction"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/supplier" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <SupervisedUserCircleIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Supplier"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/customer" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <GroupIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Customer"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/pos" button>
                             <ListItemIcon>
-                                <PeopleIcon/>
+                                <ComputerIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Pos"/>
                         </ListItem>

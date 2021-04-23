@@ -5,32 +5,40 @@ export const
     userList = 'user/list',
     userInsert ='user/insert',
     userDelete = 'user/delete',
+    userUpdate = 'user/update',
+    userFind = 'user/find',
 
-
-    //Product
-
+    // Product
     productList = 'product/list',
     productImages ='product/images',
     productInsert = 'product/insert',
     productDelete = 'product/delete',
     productUpdate = 'product/update',
+    productTransfer = 'product/transfer',
+    productFind = 'product/find',
 
 
-    //stores
+    // stores
     storeList = 'store/list',
     storeInsert = 'store/insert',
+    storeFind = 'store/find',
+    storeUpdate = 'store/update',
+    storeDelete = 'store/delete',
 
-    //User
+    // User
     transactionList = 'transaction/list',
 
-    //Sales
+    // Sales
     salesList = 'sales/list',
 
-    //Supplier
+    // Supplier
     supplierList ='supplier/list',
     supplierInsert ='supplier/insert',
+    supplierDelete = 'supplier/delete',
+    supplierUpdate=  'supplier/update',
+    supplierFind = 'supplier/find',
 
-    //Customer
+    // Customer
     CustomerList = 'customer/list',
 
     // upload

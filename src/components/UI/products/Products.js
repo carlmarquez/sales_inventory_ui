@@ -1,5 +1,4 @@
 import style, {TableOptions as options} from '../_style/TableStyle'
-import Button from "@material-ui/core/Button";
 import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip} from "@material-ui/core";
 import {ProductTable as columns, InsertProduct as insert} from '../../../utils/tableColumn/ProductTable'
 import MUIDataTable from 'mui-datatables'
@@ -18,6 +17,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Update';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import UpdateProduct from "./UpdateProduct";
+
 export const Products = () => {
     const classes = style()
 
@@ -26,10 +27,11 @@ export const Products = () => {
     const [photoUpload, setPhotoUpload] = useState(false)
     const [deleteDialog, setDeleteDialog] = useState(false)
     const [transferDialog, setTransferDialog] = useState(false)
+    const [updateDialog, setUpdateDialog] = useState(false)
+
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [update, setUpdate] = useState(false);
 
     // for autoComplete in Dialog
     const [stores, setStores] = useState([])
@@ -61,16 +63,14 @@ export const Products = () => {
 
     }, [])
 
-    const openDialog = (isUpdate) => {
-        setUpdate(isUpdate)
-        setRegisterDialog(true)
-    }
 
-    const insertData = (product) => {
-        const temp = data;
-        temp.unshift(product)
-        const newData = [product, ...data]
-        setData(newData)
+    const insertImage = () => {
+
+        Axios.get(productImages).then(e => {
+            setImages(e.data)
+        })
+
+
     }
 
 
@@ -97,14 +97,38 @@ export const Products = () => {
         setData(tempData)
     }
 
+
+    const Reload = async () => {
+        const temp = []
+        await Axios.get(productList).then((products) => {
+            products.data.map(product =>
+                temp.push(insert(product.code, product.brand, product.name, product.type, product.price, product.Supplier.name, product.Store.name, product.status))
+            )
+        })
+
+        setData(temp)
+    }
+
     return (
         <Fragment>
             {/*Pop up*/}
 
-            <ProductRegister images={images} stores={stores} suppliers={suppliers} update={update}
-                             dialog={registerDialog} closeDialog={() => setRegisterDialog(false)}
-                             insertData={insertData}/>
-            <ProductPhoto dialog={photoUpload} closeDialog={() => setPhotoUpload(false)}/>
+            <ProductRegister images={images}
+                             stores={stores}
+                             suppliers={suppliers}
+                             dialog={registerDialog}
+                             closeDialog={() => setRegisterDialog(false)}
+                             reload={Reload}
+            />
+
+            <UpdateProduct images={images}
+                           stores={stores}
+                           suppliers={suppliers}
+                           dialog={updateDialog}
+                           closeDialog={() => setUpdateDialog(false)}
+                           reload={Reload}/>
+
+            <ProductPhoto insertPicture={insertImage} dialog={photoUpload} closeDialog={() => setPhotoUpload(false)}/>
 
             <DeleteProduct
                 dialog={deleteDialog}
@@ -112,7 +136,9 @@ export const Products = () => {
                 deleteProduct={deleteProduct}
             />
 
-            <TransferProduct dialog={transferDialog} closeDialog={() => setTransferDialog(false)}/>
+            <TransferProduct transfer={Reload} dialog={transferDialog}
+                             closeDialog={() => setTransferDialog(false)}/>
+
 
             {/*Table*/}
             <Grid component="main" className={classes.root}>
@@ -120,7 +146,8 @@ export const Products = () => {
                     <Toolbar>
                         <Box className={classes.tableNavbarBox}>
                             <Tooltip title="Add Product" aria-label="add">
-                                <IconButton onClick={() => openDialog(false)} aria-label="addProduct" color={"primary"}>
+                                <IconButton onClick={() => setRegisterDialog(true)} aria-label="addProduct"
+                                            color={"primary"}>
                                     <AddCircleIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>
@@ -134,7 +161,8 @@ export const Products = () => {
                             </Tooltip>
 
                             <Tooltip title="Update Product" aria-label="add">
-                                <IconButton onClick={() => openDialog(true)} aria-label="addProduct" color={"primary"}>
+                                <IconButton onClick={() => setUpdateDialog(true)} aria-label="addProduct"
+                                            color={"primary"}>
                                     <UpdateIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>

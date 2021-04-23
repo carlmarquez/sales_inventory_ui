@@ -12,6 +12,8 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import PersonAddDisabledIcon from "@material-ui/icons/PersonAddDisabled";
 import UpdateIcon from "@material-ui/icons/Update";
 import DeleteSupplier from "./DeleteSupplier";
+import UpdateSupplier from "./UpdateSupplier";
+import {Update} from "@material-ui/icons";
 
 export const Supplier = () => {
     const classes = style()
@@ -19,7 +21,8 @@ export const Supplier = () => {
     // dialog
     const [dialog, setDialog] = useState(false);
     const [deleteDialog, setDeleteDialog] = useState(false)
-
+    const [reload, setReload] = useState(false)
+    const [supplierDialog, setSupplierDialog] = useState(false)
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -27,6 +30,17 @@ export const Supplier = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
+        await Reload()
+    }, [reload])
+
+
+    const insertData = (supplier) => {
+        const newData = [supplier, ...data]
+        setData(newData)
+    }
+
+
+    const Reload = async () => {
         setLoading(true)
         const temp = []
         await Axios.get(supplierList).then((suppliers) => {
@@ -35,40 +49,35 @@ export const Supplier = () => {
             )
         })
 
-        setData(...data, temp)
+        setData(temp)
         setLoading(false)
-    }, [])
-
-
-    const insertData = (supplier) => {
-        const newData = [supplier, ...data]
-        setData(newData)
     }
 
     return (
         <Fragment>
-            <DeleteSupplier  dialog={deleteDialog} closeDialog={() => setDeleteDialog(false)}/>
-            <SupplierRegister dialog={dialog} closeDialog={() => setDialog(false)} insertData={insertData}/>
+            <DeleteSupplier Reload={Reload}  dialog={deleteDialog} closeDialog={() => setDeleteDialog(false)}/>
+            <SupplierRegister  dialog={dialog} closeDialog={() => setDialog(false)} insertData={insertData}/>
+            <UpdateSupplier Reload={Reload}  dialog={supplierDialog} closeDialog={() => setSupplierDialog(false)} insertData={insertData}/>
             <Grid component="main" className={classes.root}>
                 <Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
                     <Toolbar>
                         <Box className={classes.tableNavbarBox}>
                             <Tooltip title="Add Supplier" aria-label="add">
-                                <IconButton onClick={() => setDialog(true)} aria-label="addProduct"
+                                <IconButton onClick={() => setDialog(true)} aria-label="Add Supplier"
                                             color={"primary"}>
                                     <PersonAddIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title="Delete Supplier" aria-label="add">
-                                <IconButton onClick={() => setDeleteDialog(true)} aria-label="addProduct"
+                                <IconButton onClick={() => setDeleteDialog(true)} aria-label="Delete Supplier"
                                             color={"secondary"}>
                                     <PersonAddDisabledIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title="Update Supplier" aria-label="add">
-                                <IconButton onClick={() => setDialog(true)} aria-label="addProduct"
+                                <IconButton onClick={() => setSupplierDialog(true)} aria-label="Update Supplier"
                                             color={"primary"}>
                                     <UpdateIcon fontSize={"large"}/>
                                 </IconButton>

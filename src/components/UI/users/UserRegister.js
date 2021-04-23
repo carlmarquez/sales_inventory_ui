@@ -5,13 +5,13 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle, FormControl,
-    Grid, InputLabel, Select, Snackbar,
+    Grid, InputLabel, Select,
     TextField
 } from "@material-ui/core"
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Axios} from "../../../utils/axios/Axios";
-import {storeList, userInsert} from "../../../utils/ServerEndPoint";
-import {Alert, AlertTitle, Autocomplete} from "@material-ui/lab";
+import {userInsert} from "../../../utils/ServerEndPoint";
+import {Autocomplete} from "@material-ui/lab";
 import Response from "../../../utils/Response/Response";
 
 
@@ -19,8 +19,8 @@ const UserRegister = (
     {
         closeDialog,
         dialog,
-        insertData,
-
+        Reload,
+        stores
     }) => {
 
 
@@ -40,8 +40,7 @@ const UserRegister = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
-    // for auto compelte
-    const [stores, setStore] = useState([])
+
 
     const close = () => {
         setShow(false)
@@ -69,8 +68,8 @@ const UserRegister = (
         }
 
 
-        Axios.post(userInsert, data).then(e => {
-            insertData(data)
+        Axios.post(userInsert, data).then(ignored=> {
+            Reload()
             setFirstName('')
             setEmail('')
             setLastName('')
@@ -90,12 +89,6 @@ const UserRegister = (
 
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async () => {
-        Axios.get(storeList).then(e => {
-            setStore(e.data)
-        })
-    }, [])
 
     return <Dialog
         open={dialog}
@@ -135,7 +128,7 @@ const UserRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    label="Last Name"
                                    type="text"
@@ -147,7 +140,7 @@ const UserRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    label="Email"
                                    type="email"
@@ -159,7 +152,7 @@ const UserRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    label="Password"
                                    type="password"
@@ -171,7 +164,7 @@ const UserRegister = (
                     </Grid>
 
                     <Grid item md={6} xs={12}>
-                        <TextField autoFocus
+                        <TextField
                                    margin="dense"
                                    label="Re-type Password"
                                    type="password"

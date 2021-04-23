@@ -5,22 +5,19 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Grid, Snackbar,
+    Grid,
     TextField
 } from "@material-ui/core"
-import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
-import {Alert, AlertTitle} from "@material-ui/lab";
-import {userDelete} from "../../../utils/ServerEndPoint";
-import Response from "../../../utils/Response/Response";
+import {useState} from "react"
+import {Axios} from "../../../utils/axios/Axios"
+import {supplierDelete} from "../../../utils/ServerEndPoint"
+import Response from "../../../utils/Response/Response"
 
-
-const DeleteUser = (
+const DeleteSupplier = (
     {
         closeDialog,
         dialog,
-        deleted
-
+        Reload
     }) => {
 
     // user data
@@ -42,11 +39,10 @@ const DeleteUser = (
 
         event.preventDefault()
 
-        Axios.post(userDelete, {
-            email
-        }).then(ignored => {
-            // deleted(email)
-            // setEmail('')
+        Axios.post(supplierDelete, {email}).then(ignored => {
+            setEmail('')
+            setShow(true)
+            Reload()
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)
@@ -79,24 +75,6 @@ const DeleteUser = (
                           successMessage='Supplier Register Success'
                           closeSnackBar={close}
                 />
-                {
-                    error ? <Alert variant="filled" severity="error">
-                        <AlertTitle><strong>Can't Delete User</strong></AlertTitle>
-                        <strong>User Can't find or the User is involve to transaction</strong>
-                    </Alert> : null
-                }
-                <br/>
-
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    open={show} autoHideDuration={3000} onClose={close}>
-                    <Alert onClose={closeDialog} severity="success">
-                        Supplier Deleted Success
-                    </Alert>
-                </Snackbar>
 
                 <Grid container spacing={1}>
                     <Grid item md={12} xs={12}>
@@ -129,4 +107,4 @@ const DeleteUser = (
 }
 
 
-export default DeleteUser
+export default DeleteSupplier

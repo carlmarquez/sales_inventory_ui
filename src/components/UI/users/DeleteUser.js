@@ -18,7 +18,7 @@ const DeleteUser = (
     {
         closeDialog,
         dialog,
-        deleted
+        Reload
 
     }) => {
 
@@ -44,9 +44,8 @@ const DeleteUser = (
         Axios.post(userDelete, {
            email
         }).then(ignored => {
-            // deleted(email)
             setEmail('')
-
+            Reload()
             setError(false)
             setShow(true)
         }).catch(error => {
