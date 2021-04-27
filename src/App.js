@@ -46,7 +46,7 @@ const App = () => {
 
     return (
         <Router>
-           /* <Suspense fallback={'loding'}>
+            <Suspense fallback={'loding'}>
                 {
                     token === null ? <Login setUser={setUser}
                                             setToken={setToken}/> :
@@ -68,7 +68,7 @@ const App = () => {
                         </Switch>
 
                 }
-            </Suspense>*/
+            </Suspense>
 
             <Redirect to={"/"}/>
         </Router>
