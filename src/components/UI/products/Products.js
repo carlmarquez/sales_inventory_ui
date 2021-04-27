@@ -1,10 +1,10 @@
 import style, {TableOptions as options} from '../_style/TableStyle'
-import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip} from "@material-ui/core";
+import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip, FormControl, InputLabel, Select} from "@material-ui/core";
 import {ProductTable as columns, InsertProduct as insert} from '../../../utils/tableColumn/ProductTable'
 import MUIDataTable from 'mui-datatables'
 import Typography from "@material-ui/core/Typography";
 import {useEffect, useState, Fragment} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {productImages, productList, storeList, supplierList} from "../../../utils/ServerEndPoint";
 import ProductRegister from "./ProductRegister";
 import ProductPhoto from "./ProductPhoto";
@@ -37,36 +37,35 @@ export const Products = () => {
     const [stores, setStores] = useState([])
     const [suppliers, setSuppliers] = useState([])
     const [images, setImages] = useState([])
+    const [branch, setBranch] = useState('0')
 
-    useEffect(async () => {
-        setLoading(true)
-        const temp = []
-        await Axios.get(productList).then((products) => {
-            products.data.map(product =>
-                temp.push(insert(product.code, product.brand, product.name, product.type, product.price, product.Supplier.name, product.Store.name, product.status))
-            )
-        })
-        setData(...data, temp)
-        setLoading(false)
+    useEffect( () => {
 
-        Axios.get(storeList).then(e => {
-            setStores(e.data)
-        })
+        const  data = async () => {
+            await changeBranch('0')
 
-        Axios.get(supplierList).then(e => {
-            setSuppliers(e.data)
-        })
+            await baseUrlWithAuth.get(storeList).then(e => {
+                setStores(e.data)
+            })
 
-        Axios.get(productImages).then(e => {
-            setImages(e.data)
-        })
+            await baseUrlWithAuth.get(supplierList).then(e => {
+                setSuppliers(e.data)
+            })
+
+            await baseUrlWithAuth.get(productImages).then(e => {
+                setImages(e.data)
+            })
+
+        }
+
+        data().then(ignored => {})
 
     }, [])
 
 
     const insertImage = () => {
 
-        Axios.get(productImages).then(e => {
+        baseUrlWithAuth.get(productImages).then(e => {
             setImages(e.data)
         })
 
@@ -81,7 +80,7 @@ export const Products = () => {
         const code = item.code
 
         while (tempQ !== 0) {
-            let current;
+            let current = 0;
 
             tempData.find((e, index) => {
                 current = index
@@ -98,15 +97,28 @@ export const Products = () => {
     }
 
 
-    const Reload = async () => {
+    const changeBranch = async (branch) => {
+        setLoading(true)
+        setBranch(branch)
         const temp = []
-        await Axios.get(productList).then((products) => {
+        await baseUrlWithAuth.get(productList,{
+            params: {
+                branch: branch
+            }
+        }).then((products) => {
             products.data.map(product =>
                 temp.push(insert(product.code, product.brand, product.name, product.type, product.price, product.Supplier.name, product.Store.name, product.status))
             )
+        }).catch(e => {
+            console.log(e)
         })
-
         setData(temp)
+        setLoading(false)
+
+    }
+
+    const Reload = async () => {
+        await changeBranch(branch)
     }
 
     return (
@@ -180,6 +192,28 @@ export const Products = () => {
                             </Tooltip>
                         </Box>
 
+                        <Box>
+                            <FormControl variant="outlined" margin='dense' fullWidth>
+                                <InputLabel htmlFor="Branch">Branch</InputLabel>
+                                <Select
+                                    native
+                                    value={branch}
+                                    label="Branch"
+                                    inputProps={{
+                                        name: 'branch',
+                                        id: 'Branch',
+                                    }}
+                                    onChange={(event) => changeBranch(event.target.value)}
+                                >
+                                    <option value='0'>All</option>
+                                    {
+                                        stores.map((e) => {
+                                            return <option key={e.id} value={e.id}>{e.name}</option>
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </Toolbar>
                 </Grid>
                 <Grid item md={12} component={Paper} className={classes.tableContainerWrapper}>

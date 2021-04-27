@@ -4,15 +4,42 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import style from './LoginStyle'
 import SignLogo from '../../assets/img/logo/SignLogo.jpg'
 import {Avatar} from "@material-ui/core";
+import {useState} from "react";
+import {baseUrlNoAuth} from "../../utils/axios/BaseUrl";
+import {login as loginEndpoint} from "../../utils/ServerEndPoint";
 
-const Login = () => {
+const Login = ({setToken, setUser}) => {
 
     const classes = style();
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+
+    const auth = {
+        username: email,
+        password
+    }
+    const login = async () => {
+        await baseUrlNoAuth.post(loginEndpoint, auth).then(e => {
+            setToken(e.data.accessToken)
+            localStorage.setItem('jars-token', e.data.accessToken)
+            setError('')
+            setUser(e.data.user)
+        }).catch(error => {
+            setError(`Account ${error.response.data}`)
+        })
+    }
+
+    const enter = (e) => {
+        if (e.code === "Enter") {
+            login()
+        }
+    }
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -26,16 +53,18 @@ const Login = () => {
 
 
                 <div className={classes.paper}>
-                    <Avatar alt="Cindy Baker" className={classes.avatarLarge} src={SignLogo} />
+                    <Avatar alt="Cindy Baker" className={classes.avatarLarge} src={SignLogo}/>
 
                     <Typography component="h1" variant="h5" className={classes.text}>
-                         Login Now
+                        Login Now
                     </Typography>
 
 
                     <form className={classes.form} noValidate>
                         <TextField
-
+                            onKeyPress={e => enter(e)}
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
                             variant="outlined"
                             margin="normal"
                             required
@@ -48,6 +77,9 @@ const Login = () => {
                             autoFocus
                         />
                         <TextField
+                            onKeyPress={e => enter(e)}
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
                             variant="outlined"
                             margin="normal"
                             required
@@ -58,31 +90,30 @@ const Login = () => {
                             id="password"
                             autoComplete="current-password"
                         />
-                        {/*<Box className={classes.util}>*/}
-                        {/*    <FormControlLabel*/}
-                        {/*        control={<Checkbox value="remember" color="primary"/>}*/}
-                        {/*        label="Remember me"*/}
-                        {/*    />*/}
-                        {/*    /!*<p>No Account Found</p>*!/*/}
-                        {/*</Box>*/}
+                        <Box className={classes.util}>
+                            {
+                                error.length === 0 ? null : <p style={{margin: 0, marginTop: 10}}>No Account Found</p>
+                            }
+                        </Box>
                         <Button
                             fullWidth
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            onClick={login}
                         >
                             Sign In
                         </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Grid item>
-                                    <Button color="primary">Forgot Password</Button>
-                                </Grid>
-                            </Grid>
-                            <Grid item>
-                                <Button color="primary" >Sign Up</Button>
-                            </Grid>
-                        </Grid>
+                        {/*<Grid container>*/}
+                        {/*    <Grid item xs>*/}
+                        {/*        <Grid item>*/}
+                        {/*            <Button color="primary">Forgot Password</Button>*/}
+                        {/*        </Grid>*/}
+                        {/*    </Grid>*/}
+                        {/*    <Grid item>*/}
+                        {/*        <Button color="primary">Sign Up</Button>*/}
+                        {/*    </Grid>*/}
+                        {/*</Grid>*/}
                         <Box mt={5}>
                             {/*<Copyright/>*/}
                         </Box>

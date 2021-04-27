@@ -8,7 +8,7 @@ import {
     Grid, TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {supplierInsert} from "../../../utils/ServerEndPoint";
 import Response from '../../../utils/Response/Response'
 
@@ -47,8 +47,13 @@ const SupplierRegister = (
 
         event.preventDefault()
 
-        if (name.trim() === '') {
-            setError(true)
+        if (name.trim().length === 0) {
+            alert("Please enter store name")
+            return
+        }
+
+        if(email.trim().length === 0){
+            alert("Please enter a email")
             return
         }
 
@@ -58,13 +63,13 @@ const SupplierRegister = (
             address: address,
             city: city,
             state: state,
-            postalCode: postalCode,
+            postalCode: postalCode.length ===0? 1: postalCode,
             mobile_no: mobileNo,
             tel_no: telNo
         }
 
 
-        Axios.post(supplierInsert, data).then(e => {
+        baseUrlWithAuth.post(supplierInsert, data).then(e => {
             insertData(data)
             setName('')
             setEmail('')
@@ -92,7 +97,7 @@ const SupplierRegister = (
         aria-labelledby="add-student"
         maxWidth={"md"}
     >
-        <form onInvalid onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Register Supplier</DialogTitle>

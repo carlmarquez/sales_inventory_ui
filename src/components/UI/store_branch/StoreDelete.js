@@ -9,7 +9,7 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react"
-import {Axios} from "../../../utils/axios/Axios"
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth"
 import {storeDelete} from "../../../utils/ServerEndPoint"
 import Response from "../../../utils/Response/Response"
 
@@ -40,7 +40,7 @@ const StoreDelete = (
 
         event.preventDefault()
 
-        Axios.post(storeDelete, {email}).then(ignored => {
+        baseUrlWithAuth.post(storeDelete, {email}).then(ignored => {
             setEmail('')
             setShow(true)
             Reload()
@@ -61,7 +61,7 @@ const StoreDelete = (
         maxWidth={"sm"}
         fullWidth
     >
-        <form onInvalid onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Remove Store</DialogTitle>

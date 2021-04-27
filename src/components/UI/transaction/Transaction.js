@@ -1,10 +1,9 @@
 import style, { TableOptions as options } from '../_style/TableStyle'
-import Button from "@material-ui/core/Button";
 import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip} from "@material-ui/core";
 import { TransactionTable as columns, InsertTransaction as insert } from '../../../utils/tableColumn/TransactionTable'
 import MUIDataTable from 'mui-datatables'
 import {Fragment, useEffect, useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {transactionList} from "../../../utils/ServerEndPoint";
 import SupplierRegister from "../supplier/SupplierRegister";
 import Typography from "@material-ui/core/Typography";
@@ -17,18 +16,23 @@ export const Transaction = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async () => {
-        setLoading(true)
+    useEffect( () => {
         const temp = []
-        await Axios.get(transactionList).then((transactions) => {
-            transactions.data.map(transaction =>
-                temp.push(insert(transaction.id,`${transaction.User.firstName} ${transaction.User.lastName}`, transaction.amount,
-                    transaction.discount,`${transaction.Customer.firstName} ${transaction.Customer.lastName}`,transaction.Store.name,transaction.createdAt))
-            )
-        })
-        setData(...data,temp)
-        setLoading(false)
+        const get = async () => {
+            setLoading(true)
+
+            await baseUrlWithAuth.get(transactionList).then((transactions) => {
+                transactions.data.map(transaction =>
+                    temp.push(insert(transaction.id,`${transaction.User.firstName} ${transaction.User.lastName}`, transaction.amount,
+                        transaction.discount,`${transaction.Customer.name}`,transaction.Store.name,transaction.createdAt))
+                )
+            })
+            setData(...data,temp)
+            setLoading(false)
+        }
+        get().then(ignored => {})
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

@@ -1,6 +1,11 @@
 export const
     serverEndpoint = 'https://sales-inventory-server.herokuapp.com/',
 
+    // Auth
+    login = 'login',
+    logout = 'logout',
+    tokenData ='token',
+
     // User
     userList = 'user/list',
     userInsert ='user/insert',
@@ -42,7 +47,13 @@ export const
     CustomerList = 'customer/list',
 
     // upload
-    productPhoto = 'upload'
+    productPhoto = 'upload',
+
+    // auditTrail
+    auditTrailList = 'audit/list',
+
+    // dashboard
+    dashBoardData = 'dashboard/data'
 
 
 

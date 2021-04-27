@@ -5,11 +5,11 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Grid, Snackbar,
+    Grid,
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {storeInsert} from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 
@@ -48,24 +48,26 @@ const StoreRegister = (
 
         event.preventDefault()
 
-        if (name.trim() === '') {
-            alert(name)
-            setError(true)
+        if (name.trim().length === 0) {
+            alert("Please enter store name")
             return
         }
 
+        if(email.trim().length === 0){
+            alert("Please enter a email")
+            return
+        }
         const data = {
             name: name,
             email: email,
-            address: address,
-            city: city,
-            state: state,
-            postalCode: postalCode,
-            mobile_no: mobileNo,
-            tel_no: telNo
+            address: address.trim().length === 0? '':address,
+            city: city.trim().length ===0?'':city,
+            state: state.trim().length ===0? '': state,
+            postalCode: postalCode.length ===0? 1: postalCode,
+            mobile_no: mobileNo.trim().length===0? '': mobileNo,
+            tel_no: telNo.trim().length === 0? '': telNo
         }
-
-        Axios.post(storeInsert, data).then(e => {
+        baseUrlWithAuth.post(storeInsert, data).then(ignored => {
             Reload()
             setName('')
             setEmail('')
@@ -93,7 +95,7 @@ const StoreRegister = (
         aria-labelledby="add-student"
         maxWidth={"md"}
     >
-        <form onInvalid onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Register Store Branch</DialogTitle>

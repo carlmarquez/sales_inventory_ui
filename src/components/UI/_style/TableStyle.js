@@ -3,11 +3,7 @@ import { makeStyles } from "@material-ui/styles"
 const style = makeStyles(() => ({
     root: {
         width: '100%',
-        overflowY: 'auto',
         height: '100%'
-    },
-    tableContainer: {
-        maxHeight: 520
     },
     tableNavbar: {
         marginBottom: 10,
@@ -27,7 +23,7 @@ const style = makeStyles(() => ({
 
 
 export default style;
-// just overide this function if you have a unuqie function
+// just override this function if you have a unique function
 // in your table
 export function TableOptions(loading) {
 

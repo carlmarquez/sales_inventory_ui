@@ -9,7 +9,7 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react"
-import {Axios} from "../../../utils/axios/Axios"
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth"
 import {supplierDelete} from "../../../utils/ServerEndPoint"
 import Response from "../../../utils/Response/Response"
 
@@ -39,7 +39,7 @@ const DeleteSupplier = (
 
         event.preventDefault()
 
-        Axios.post(supplierDelete, {email}).then(ignored => {
+        baseUrlWithAuth.post(supplierDelete, {email}).then(ignored => {
             setEmail('')
             setShow(true)
             Reload()
@@ -60,7 +60,7 @@ const DeleteSupplier = (
         maxWidth={"sm"}
         fullWidth
     >
-        <form onInvalid onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Remove Supplier</DialogTitle>

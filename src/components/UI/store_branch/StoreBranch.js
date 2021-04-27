@@ -1,9 +1,9 @@
-import style, { TableOptions as options } from '../_style/TableStyle'
+import style, {TableOptions as options} from '../_style/TableStyle'
 import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip} from "@material-ui/core";
-import { StoreTable as columns, InsertStore as insert } from '../../../utils/tableColumn/StoreTable'
+import {StoreTable as columns, InsertStore as insert} from '../../../utils/tableColumn/StoreTable'
 import MUIDataTable from 'mui-datatables'
 import {useEffect, useState, Fragment} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {storeList} from "../../../utils/ServerEndPoint";
 import StoreRegister from "./StoreRegister";
 import Typography from "@material-ui/core/Typography";
@@ -14,32 +14,33 @@ import UpdateIcon from '@material-ui/icons/Update';
 import StoreDelete from "./StoreDelete";
 import StoreUpdate from "./StoreUpdate";
 
- const StoreBranch = () => {
+const StoreBranch = () => {
     const classes = style()
 
     const [dialog, setDialog] = useState(false);
     const [data, setData] = useState([])
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [storeDeleteDialog, setDeleteStoreDialog] = useState(false)
     const [storeUpdateDialog, setStoreUpdateDialog] = useState(false)
 
 
-
-    useEffect( () => {
-        Reload().then(ignored => {})
+    useEffect(() => {
+        Reload().then(ignored => {
+        })
     }, [])
 
     const Reload = async () => {
         setLoading(true)
         const temp = []
-        await Axios.get(storeList).then((stores) => {
+        await baseUrlWithAuth.get(storeList).then((stores) => {
             stores.data.map(store =>
-                temp.push(insert(store.id, store.name,store.email, store.address,store.city,store.state,store.postalCode,store.mobile_no, store.tel_no))
+                temp.push(insert(store.id, store.name, store.email, store.address, store.city, store.state, store.postalCode, store.mobile_no, store.tel_no))
             )
         })
         setData(temp)
         setLoading(false)
     }
+
 
     return (
         <Fragment>
@@ -81,7 +82,8 @@ import StoreUpdate from "./StoreUpdate";
                         title={
                             <Typography variant="h6">
                                 Store List
-                                {loading && <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative', top: 4 }} />}
+                                {loading &&
+                                <CircularProgress size={24} style={{marginLeft: 15, position: 'relative', top: 4}}/>}
                             </Typography>
                         }
                         data={data}

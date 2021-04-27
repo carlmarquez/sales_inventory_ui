@@ -9,12 +9,14 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
     productInsert
 } from "../../../utils/ServerEndPoint";
 import {Autocomplete} from "@material-ui/lab";
 import Response from "../../../utils/Response/Response";
+import CreateError from "../../../utils/FormError/CreateError";
+import RemoveError from "../../../utils/FormError/RemoveError";
 
 
 const ProductRegister = (
@@ -28,16 +30,16 @@ const ProductRegister = (
     }) => {
 
 
-    //
+    // for form value
     const [brand, setBrand] = useState('')
     const [name, setName] = useState('')
     const [type, setType] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(1)
     const [qty, setQty] = useState(1)
-    const [supplier, setSupplier] = useState()
-    const [store, setStore] = useState()
-    const [photo, setPhoto] = useState()
-    const [code, setCode] = useState()
+    const [supplier, setSupplier] = useState('')
+    const [store, setStore] = useState('')
+    const [photo, setPhoto] = useState('')
+    const [code, setCode] = useState('')
 
 
     // for snack bar
@@ -46,47 +48,111 @@ const ProductRegister = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form error
+    const [productImagesError, setProductImagesError] = useState(false)
+    const [productBrandError, setProductBrandError] = useState(false)
+    const [productNameError, setProductNameError] = useState(false)
+    const [productTypeError, setProductTypeError] = useState(false)
+    const [storeIdError, setStoreIdError] = useState(false)
+    const [supplierIdError, setSupplierIdError] = useState(false)
+    const [productCodeError, setProductCodeError] = useState(false)
+
+
+    // form errorMessage
+    const [productImagesErrorMessage, setProductImagesErrorMessage] = useState('')
+    const [productBrandErrorMessage, setProductBrandErrorMessage] = useState('')
+    const [productNameErrorMessage, setProductNameErrorMessage] = useState('')
+    const [productTypeErrorMessage, setProductTypeErrorMessage] = useState('')
+    const [storeIdErrorMessage, setStoreIdErrorMessage] = useState('')
+    const [supplierIdErrorMessage, setSupplierIdErrorMessage] = useState('')
+    const [productCodeErrorMessage, setProductCodeErrorMessage] = useState('')
 
     const register = async (event) => {
+
         event.preventDefault()
-        if (brand.trim() === '') {
-            setError(true)
-            return
+        RemoveFormError()
+        let error = false
+
+        if (brand.trim().length === 0) {
+            error = true
+            CreateError(setProductBrandError, setProductBrandErrorMessage, 'please enter brand')
         }
 
-        const data = {
-            brand,
-            code,
-            name,
-            type,
-            price: parseFloat(price),
-            status: 'Available',
-            photo,
-            SupplierId: parseInt(supplier.id),
-            StoreId: parseInt(store.id),
-            qty
+        if (!photo) {
+            error = true
+            CreateError(setProductImagesError, setProductImagesErrorMessage, 'Please enter a photo')
+        }
+
+        if (name.trim().length === 0) {
+            error = true
+            CreateError(setProductNameError, setProductNameErrorMessage, 'Please enter product name')
+        }
+
+        if (type.trim().length === 0) {
+            error = true
+            CreateError(setProductTypeError, setProductTypeErrorMessage, 'Please enter a product type')
+        }
+
+        if (!store) {
+            error = true
+            CreateError(setStoreIdError, setStoreIdErrorMessage, 'Please select a branch')
+        }
+
+        if (!supplier) {
+            error = true
+            CreateError(setSupplierIdError, setSupplierIdErrorMessage, 'Please select a supplier')
+        }
+
+        if (code.trim().length === 0) {
+            error = true
+            CreateError(setProductCodeError, setProductCodeErrorMessage, 'Please enter a product code')
         }
 
 
-        await Axios.post(productInsert, data).then(ignored => {
-            setError(false)
-            setShowing(true)
-            setBrand('')
-            setName('')
-            setType('')
-            setPrice('')
-            setCode('')
-            setQty(1)
-            reload()
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
+        if (!error) {
+            const data = {
+                brand,
+                code,
+                name,
+                type,
+                price: price,
+                status: 'Available',
+                photo,
+                SupplierId: parseInt(supplier.id),
+                StoreId: parseInt(store.id),
+                qty
+            }
+
+            await baseUrlWithAuth.post(productInsert, data).then(ignored => {
+                setError(false)
+                setShowing(true)
+                setBrand('')
+                setName('')
+                setType('')
+                setPrice(1)
+                setCode('')
+                setQty(1)
+                reload()
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+                setError(true)
+            })
+        }
 
     }
 
+    const RemoveFormError = () => {
+        RemoveError(setStoreIdError, setStoreIdErrorMessage)
+        RemoveError(setProductImagesError, setProductImagesErrorMessage)
+        RemoveError(setProductBrandError, setProductBrandErrorMessage)
+        RemoveError(setProductNameError, setProductNameErrorMessage)
+        RemoveError(setProductTypeError, setProductTypeErrorMessage)
+        RemoveError(setStoreIdError, setStoreIdErrorMessage)
+        RemoveError(setSupplierIdError, setSupplierIdErrorMessage)
+        RemoveError(setProductCodeError, setProductCodeErrorMessage)
+    }
 
     return <Dialog
         open={dialog}
@@ -99,7 +165,7 @@ const ProductRegister = (
             <DialogTitle id="add-student">Register Product</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                   Insert Message
+                    Insert Message
                 </DialogContentText>
 
                 <Response showError={error}
@@ -120,13 +186,20 @@ const ProductRegister = (
                                 getOptionLabel={(option) => option}
                                 getOptionSelected={(option, value) => option === value}
                                 onChange={(event, value) => setPhoto(value)}
-                                renderInput={(params) => <TextField autoFocus {...params} label="Product Images"
-                                                                    variant="outlined"/>}
+                                renderInput={(params) =>
+                                    <TextField
+                                        error={productImagesError}
+                                        helperText={productImagesErrorMessage}
+                                        autoFocus {...params}
+                                        label="Product Images"
+                                        variant="outlined"/>}
                             />
                         </FormControl>
                     </Grid>
                     <Grid item md={4} xs={12}>
                         <TextField
+                            error={productBrandError}
+                            helperText={productBrandErrorMessage}
                             margin="dense"
                             label="Product Brand"
                             type="text"
@@ -140,6 +213,8 @@ const ProductRegister = (
 
                     <Grid item md={4} xs={12}>
                         <TextField
+                            error={productNameError}
+                            helperText={productNameErrorMessage}
                             margin="dense"
                             label="Product Name"
                             type="text"
@@ -152,6 +227,8 @@ const ProductRegister = (
 
                     <Grid item md={4} xs={12}>
                         <TextField
+                            error={productTypeError}
+                            helperText={productTypeErrorMessage}
                             margin="dense"
                             label="Product Type"
                             type="text"
@@ -170,7 +247,7 @@ const ProductRegister = (
                             fullWidth
                             variant="outlined"
                             value={price}
-                            onChange={(e) => setPrice(e.target.value < 0 ? 1 : e.target.value)}
+                            onChange={(e) => setPrice(e.target.value < 1 ? 1 : e.target.value)}
                         />
                     </Grid>
 
@@ -181,8 +258,14 @@ const ProductRegister = (
                                 options={stores}
                                 getOptionLabel={(option) => option.name + ' ' + option.state}
                                 getOptionSelected={(option, value) => option.id === value.id}
-                                onChange={(event, value) => setStore(value)}
-                                renderInput={(params) => <TextField {...params} label="Store" variant="outlined"/>}
+                                onChange={(event, value) => value === null ? setStore('') : setStore(value)}
+                                renderInput={(params) =>
+                                    <TextField
+                                        error={storeIdError}
+                                        helperText={storeIdErrorMessage}
+                                        {...params}
+                                        label="Store"
+                                        variant="outlined"/>}
                             />
                         </FormControl>
                     </Grid>
@@ -194,15 +277,22 @@ const ProductRegister = (
                                 options={suppliers}
                                 getOptionLabel={(option) => option.name + ' ' + option.state}
                                 getOptionSelected={(option, value) => option.id === value.id}
-                                onChange={(event, value) => setSupplier(value)}
-                                renderInput={(params) => <TextField {...params} label="Supplier"
-                                                                    variant="outlined"/>}
+                                onChange={(event, value) => value === null ? setSupplier('') : setSupplier(value)}
+                                renderInput={(params) =>
+                                    <TextField
+                                        error={supplierIdError}
+                                        helperText={supplierIdErrorMessage}
+                                        {...params}
+                                        label="Supplier"
+                                        variant="outlined"/>}
                             />
                         </FormControl>
                     </Grid>
 
                     <Grid item md={4} xs={12}>
                         <TextField
+                            error={productCodeError}
+                            helperText={productCodeErrorMessage}
                             margin="dense"
                             label="Product Code"
                             type="text"
@@ -222,10 +312,9 @@ const ProductRegister = (
                             fullWidth
                             variant="outlined"
                             value={qty}
-                            onChange={e => setQty(e.target.value < 0 ? 1 : e.target.value)}
+                            onChange={e => setQty(e.target.value <= 0 ? 1 : e.target.value)}
                         />
                     </Grid>
-
                 </Grid>
             </DialogContent>
 

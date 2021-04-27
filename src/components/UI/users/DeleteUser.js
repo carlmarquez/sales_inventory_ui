@@ -9,7 +9,7 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {Alert, AlertTitle} from "@material-ui/lab";
 import {userDelete} from "../../../utils/ServerEndPoint";
 
@@ -41,7 +41,7 @@ const DeleteUser = (
 
         event.preventDefault()
 
-        Axios.post(userDelete, {
+        baseUrlWithAuth.post(userDelete, {
            email
         }).then(ignored => {
             setEmail('')
@@ -63,7 +63,7 @@ const DeleteUser = (
         maxWidth={"sm"}
         fullWidth
     >
-        <form onInvalid onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Remove User</DialogTitle>

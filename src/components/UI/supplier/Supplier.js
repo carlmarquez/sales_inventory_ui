@@ -4,7 +4,7 @@ import {SupplierTable as columns, InsertSupplier as insert} from '../../../utils
 import MUIDataTable from 'mui-datatables'
 import SupplierRegister from "./SupplierRegister";
 import {Fragment, useEffect, useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {supplierList} from "../../../utils/ServerEndPoint";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,7 +13,6 @@ import PersonAddDisabledIcon from "@material-ui/icons/PersonAddDisabled";
 import UpdateIcon from "@material-ui/icons/Update";
 import DeleteSupplier from "./DeleteSupplier";
 import UpdateSupplier from "./UpdateSupplier";
-import {Update} from "@material-ui/icons";
 
 export const Supplier = () => {
     const classes = style()
@@ -21,7 +20,7 @@ export const Supplier = () => {
     // dialog
     const [dialog, setDialog] = useState(false);
     const [deleteDialog, setDeleteDialog] = useState(false)
-    const [reload, setReload] = useState(false)
+    const [reload] = useState(false)
     const [supplierDialog, setSupplierDialog] = useState(false)
 
     const [data, setData] = useState([])
@@ -29,8 +28,14 @@ export const Supplier = () => {
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async () => {
-        await Reload()
+    useEffect(() => {
+        const data = async () => {
+            await Reload()
+        }
+
+        data().then(ignored => {
+        })
+
     }, [reload])
 
 
@@ -43,11 +48,11 @@ export const Supplier = () => {
     const Reload = async () => {
         setLoading(true)
         const temp = []
-        await Axios.get(supplierList).then((suppliers) => {
+        await baseUrlWithAuth.get(supplierList).then((suppliers) =>
             suppliers.data.map(supplier =>
                 temp.push(insert(supplier.id, supplier.name, supplier.email, supplier.address, supplier.city, supplier.state, supplier.postalCode, supplier.mobile_no, supplier.tel_no))
             )
-        })
+        )
 
         setData(temp)
         setLoading(false)
@@ -55,9 +60,13 @@ export const Supplier = () => {
 
     return (
         <Fragment>
-            <DeleteSupplier Reload={Reload}  dialog={deleteDialog} closeDialog={() => setDeleteDialog(false)}/>
-            <SupplierRegister  dialog={dialog} closeDialog={() => setDialog(false)} insertData={insertData}/>
-            <UpdateSupplier Reload={Reload}  dialog={supplierDialog} closeDialog={() => setSupplierDialog(false)} insertData={insertData}/>
+            <DeleteSupplier
+                Reload={Reload}
+                dialog={deleteDialog}
+                closeDialog={() => setDeleteDialog(false)}/>
+            <SupplierRegister dialog={dialog} closeDialog={() => setDialog(false)} insertData={insertData}/>
+            <UpdateSupplier Reload={Reload} dialog={supplierDialog} closeDialog={() => setSupplierDialog(false)}
+                            insertData={insertData}/>
             <Grid component="main" className={classes.root}>
                 <Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
                     <Toolbar>

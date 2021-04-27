@@ -1,10 +1,10 @@
-import style, { TableOptions as options } from '../_style/TableStyle'
+import style, {TableOptions as options} from '../_style/TableStyle'
 import {Paper, Grid, Box, Toolbar, CircularProgress, Tooltip} from "@material-ui/core";
-import { SalesTable as columns, InsertSales as insert } from '../../../utils/tableColumn/SalesTable'
+import {SalesTable as columns, InsertSales as insert} from '../../../utils/tableColumn/SalesTable'
 import MUIDataTable from 'mui-datatables'
 import Typography from "@material-ui/core/Typography";
 import {useEffect, useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {salesList} from "../../../utils/ServerEndPoint";
 import IconButton from "@material-ui/core/IconButton";
 import TimelineIcon from '@material-ui/icons/Timeline';
@@ -12,22 +12,27 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 export const Sales = () => {
     const classes = style()
     const [data, setData] = useState([])
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(async () => {
-        setLoading(true)
-        const temp = []
-        await Axios.get(salesList).then((sales) => {
-            sales.data.map(sale =>
-                temp.push(insert(sale.id, sale.Product.name,sale.Product.price,sale.qty, sale.total,sale.Transaction.id,sale.createdAt))
-            )
-        })
+    useEffect(() => {
 
-        setData(...data,temp)
-        setLoading(false)
-    }, [data])
+        const getData = async () => {
+            setLoading(true)
+            const temp = []
+            await baseUrlWithAuth.get(salesList).then((sales) => {
+                sales.data.map(sale =>
+                    temp.push(insert(sale.id, sale.Product.name, sale.Product.price, sale.qty, sale.total, sale.Transaction.id, sale.createdAt))
+                )
+            })
+            setData(...data, temp)
+            setLoading(false)
+        }
+        
+        getData().then(ignored => {})
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <Grid component="main" className={classes.root}>
@@ -51,7 +56,8 @@ export const Sales = () => {
                     title={
                         <Typography variant="h6">
                             Sales List
-                            {loading && <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative', top: 4 }} />}
+                            {loading &&
+                            <CircularProgress size={24} style={{marginLeft: 15, position: 'relative', top: 4}}/>}
                         </Typography>
                     }
                     data={data}

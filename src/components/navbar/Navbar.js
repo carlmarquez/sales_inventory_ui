@@ -5,7 +5,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core';
 
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -50,16 +50,17 @@ const StyledMenuItem = withStyles((theme) => ({
     },
 }))(MenuItem);
 
-const Navbar = ({handleDrawerOpen}) => {
+const Navbar = ({setUser,handleDrawerOpen,name}) => {
 
     const classes = style()
 
 
 
-
-    useEffect(() => {
-        // mode(false)
-    }, [])
+    const logoutClick = () => {
+        localStorage.clear()
+        window.location.reload(true);
+        setUser()
+    }
 
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -90,9 +91,9 @@ const Navbar = ({handleDrawerOpen}) => {
                     Sales and Inventory System
                 </Typography>
 
-                <Link  style={{textDecoration: 'none', color: 'white'}} >
+                <Link to="/"  style={{textDecoration: 'none', color: 'white'}} >
                     <Typography variant="h6" noWrap style={{marginRight: '10px'}}>
-                        {`Current Login user`}
+                        {name===undefined?null:`${name.firstName} ${name.lastName}`}
                     </Typography>
                 </Link>
 
@@ -116,7 +117,7 @@ const Navbar = ({handleDrawerOpen}) => {
 
                     >
 
-                        <StyledMenuItem >
+                        <StyledMenuItem onClick={logoutClick}>
                             <ListItemIcon>
                                 <ExitToAppIcon fontSize="small"/>
                             </ListItemIcon>
@@ -126,6 +127,7 @@ const Navbar = ({handleDrawerOpen}) => {
                     </StyledMenu>
                 </div>
             </Toolbar>
+
         </AppBar>
     )
 }

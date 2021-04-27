@@ -9,7 +9,7 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState, Fragment, useEffect} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
     supplierUpdate,
 } from "../../../utils/ServerEndPoint";
@@ -48,7 +48,15 @@ const UpdateSupplier = (
 
     const register = async (event) => {
         event.preventDefault()
+        if (name.trim().length === 0) {
+            alert("Please enter store name")
+            return
+        }
 
+        if(email.trim().length === 0){
+            alert("Please enter a email")
+            return
+        }
         const data = {
             id,
             name: name,
@@ -56,13 +64,13 @@ const UpdateSupplier = (
             address: address,
             city: city,
             state: state,
-            postalCode: postalCode,
+            postalCode: postalCode.length ===0? 1: postalCode,
             mobile_no: mobileNo,
             tel_no: telNo
         }
 
 
-        await Axios.post(supplierUpdate, data).then(ignored => {
+        await baseUrlWithAuth.post(supplierUpdate, data).then(ignored => {
             setError(false)
             Reload()
             alert("Update Success")
@@ -83,7 +91,6 @@ const UpdateSupplier = (
 
     // update
     const updateSupplier = (supplier) => {
-        console.log(supplier)
         setId(supplier.id)
         setName(supplier.name)
         setAddress(supplier.address)
@@ -109,7 +116,7 @@ const UpdateSupplier = (
                     aria-labelledby="add-student"
                     maxWidth={"md"}
                 >
-                    <form onInvalid onSubmit={register}>
+                    <form noValidate={false} onSubmit={register}>
 
 
                         <DialogTitle id="add-student">Update Supplier</DialogTitle>

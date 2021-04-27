@@ -9,7 +9,7 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
     userFind
 } from "../../../utils/ServerEndPoint";
@@ -37,14 +37,13 @@ const FindUser = (
     const register = async (event) => {
         event.preventDefault()
 
-        await Axios.post(userFind, {email}).then(e => {
-            console.log(e)
-            // setEmail('')
-
-            setError(false)
-            updateUser(e.data[0])
+        await baseUrlWithAuth.post(userFind, {email}).then(e => {
             setShow(true)
+            setError(false)
             closeDialog(false)
+
+            updateUser(e.data[0])
+
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)

@@ -9,10 +9,12 @@ import {
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
-import {Axios} from "../../../utils/axios/Axios";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {userInsert} from "../../../utils/ServerEndPoint";
 import {Autocomplete} from "@material-ui/lab";
 import Response from "../../../utils/Response/Response";
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CreateError from "../../../utils/FormError/CreateError";
 
 
 const UserRegister = (
@@ -40,51 +42,108 @@ const UserRegister = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // error state
+    const [firstNameError, setFirstNameError] = useState(false)
+    const [lastNameError, setLastNameError] = useState(false)
+    const [emailError, setEmailError] = useState(false)
+    const [passwordError, setPasswordError] = useState(false)
+    const [passwordReError, setPasswordReError] = useState(false)
+    const [storeError, setStoreError] = useState(false)
 
 
+    // error message
+    const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('')
+    const [lastNameErrorMessage, setLastNameErrorMessage] = useState('')
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+    const [passwordReErrorMessage, setPasswordReErrorMessage] = useState('')
+    const [storeErrorMessage, setStoreErrorMessage] = useState('')
     const close = () => {
         setShow(false)
     }
 
+    const RemoveFormError = () => {
+        RemoveError(setFirstNameError,setFirstNameErrorMessage);
+        RemoveError(setLastNameError, setLastNameErrorMessage)
+        RemoveError(setEmailError,setEmailErrorMessage)
+        RemoveError(setStoreError,setStoreErrorMessage)
+        RemoveError(setPasswordError,setPasswordErrorMessage)
+        RemoveError(setPasswordReError,setPasswordReErrorMessage)
+
+    }
 
     const register = (event) => {
-
-
         event.preventDefault()
+        RemoveFormError()
+        let error = false
 
-        if (firstName.trim() === '') {
-            setError(true)
-            return
+        if (password !== reTypePassword || reTypePassword !== password) {
+            CreateError(setPasswordReError,setPasswordReErrorMessage,'Password Do Not Match')
+            CreateError(setPasswordError,setPasswordErrorMessage,'Password Do Not Match')
+
+            error = true
         }
 
-        const data = {
-            email,
-            password,
-            firstName,
-            lastName,
-            role,
-            StoreId: parseInt(storeId),
-            status: 1
+        if(firstName.trim().length === 0){
+            error = true
+            CreateError(setFirstNameError,setFirstNameErrorMessage, 'Please Insert Firstname')
+
         }
 
+        if(lastName.trim().length === 0){
+            error = true
+            CreateError(setLastNameError,setLastNameErrorMessage,'Please Insert LastName')
 
-        Axios.post(userInsert, data).then(ignored=> {
-            Reload()
-            setFirstName('')
-            setEmail('')
-            setLastName('')
-            setRetypePassword('')
-            setPassword('')
-            setStoreId('')
+        }
 
-            setError(false)
-            setShow(true)
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
+        if(email.trim().length===0){
+            error = true
+            CreateError(setEmailError, setEmailErrorMessage, 'Please Insert Email')
+        }
+        if(storeId.length===0){
+            error = true
+            CreateError(setStoreError, setStoreErrorMessage,'Please Select Branch')
+        }
+
+        if(password.trim().length ===0){
+            error =true
+            CreateError(setPasswordError, setPasswordErrorMessage, 'Please Enter Password')
+        }
+
+        if(reTypePassword.length===0){
+            error = true
+            CreateError(setPasswordReError, setPasswordReErrorMessage, 'Please Enter Password')
+        }
+
+        if (!error) {
+            const data = {
+                email,
+                password,
+                firstName,
+                lastName,
+                role,
+                StoreId: parseInt(storeId),
+                status: 1
+            }
+
+            baseUrlWithAuth.post(userInsert, data).then(ignored => {
+                Reload()
+                setFirstName('')
+                setEmail('')
+                setLastName('')
+                setRetypePassword('')
+                setPassword('')
+                setStoreId('')
+                setError(false)
+                setShow(true)
+                RemoveFormError()
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+                setError(true)
+            })
+        }
 
 
     }
@@ -96,7 +155,7 @@ const UserRegister = (
         aria-labelledby="add-student"
         maxWidth={"md"}
     >
-        <form onSubmit={register}>
+        <form noValidate={false} onSubmit={register}>
 
 
             <DialogTitle id="add-student">Register User</DialogTitle>
@@ -115,76 +174,96 @@ const UserRegister = (
 
                 <Grid container spacing={1}>
                     <Grid item md={4} xs={12}>
-                        <TextField autoFocus
-                                   margin="dense"
-                                   label="First Name"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={firstName}
-                                   onChange={(e) => setFirstName(e.target.value)}
+                        <TextField
+                            error={firstNameError}
+                            helperText={firstNameErrorMessage}
+                            required
+                            autoFocus
+                            margin="dense"
+                            label="First Name"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
                         />
 
                     </Grid>
 
                     <Grid item md={4} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Last Name"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={lastName}
-                                   onChange={(e) => setLastName(e.target.value)}
+                            error={lastNameError}
+                            helperText={lastNameErrorMessage}
+                            required
+                            margin="dense"
+                            label="Last Name"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={4} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Email"
-                                   type="email"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={email}
-                                   onChange={(e) => setEmail(e.target.value)}
+                            required
+                            error={emailError}
+                            helperText={emailErrorMessage}
+                            margin="dense"
+                            label="Email"
+                            type="email"
+                            fullWidth
+                            variant="outlined"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Password"
-                                   type="password"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={password}
-                                   onChange={e => setPassword(e.target.value)}
+                            required
+                            error={passwordError}
+                            helperText={passwordErrorMessage}
+                            margin="dense"
+                            label="Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            autoComplete={"on"}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Re-type Password"
-                                   type="password"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={reTypePassword}
-                                   onChange={e => setRetypePassword(e.target.value)}
+                            autoComplete="on"
+                            error={passwordReError}
+                            helperText={passwordReErrorMessage}
+                            required
+                            margin="dense"
+                            label="Re-type Password"
+                            type="password"
+                            fullWidth
+                            variant="outlined"
+                            value={reTypePassword}
+                            onChange={e => setRetypePassword(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <FormControl variant="outlined" margin='dense' fullWidth>
-                            <InputLabel htmlFor="Major">Role</InputLabel>
+                            <InputLabel
+                                        htmlFor="role">{'Role'}</InputLabel>
                             <Select
+                                required
                                 native
                                 value={role}
-                                label="Major"
+                                label={'Role'}
                                 inputProps={{
-                                    name: 'age',
-                                    id: 'Major',
+                                    name: 'role',
+                                    id: 'role',
                                 }}
                                 onChange={(event => setRole(parseInt(event.target.value)))}
                             >
@@ -203,9 +282,11 @@ const UserRegister = (
                                 options={stores}
                                 getOptionLabel={(option) => option.name + ' ' + option.state}
                                 getOptionSelected={(option, value) => option.id === value.id}
-                                onChange={(event, value) => setStoreId(value.id)}
-                                renderInput={(params) => <TextField {...params} label="Store Branch"
-                                                                    variant="outlined"/>}
+                                onChange={(event, value) => setStoreId(value!==null?value.id:'')}
+                                renderInput={(params) =>
+                                    <TextField error={storeError} helperText={storeErrorMessage} required {...params}
+                                               label="Store Branch"
+                                               variant="outlined"/>}
                             />
                         </FormControl>
                     </Grid>

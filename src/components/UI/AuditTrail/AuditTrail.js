@@ -1,33 +1,34 @@
 import style, {TableOptions as options} from '../_style/TableStyle'
 import {Paper, Grid, CircularProgress} from "@material-ui/core";
-import {CustomerTable as columns, InsertCustomer as insert} from '../../../utils/tableColumn/CustomerTable'
+import {AuditTrailTable as columns, InsertAudit as insert} from '../../../utils/tableColumn/AuditTrail'
 import MUIDataTable from 'mui-datatables'
 import Typography from "@material-ui/core/Typography";
 import {useEffect, useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {CustomerList} from "../../../utils/ServerEndPoint";
+import {auditTrailList} from "../../../utils/ServerEndPoint";
 
-
-export const Customers = () => {
+export const AuditTrail = () => {
     const classes = style()
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        setLoading(true)
-        const temp = []
+
         const getData = async () => {
-            await baseUrlWithAuth.get(CustomerList).then((customers) => {
-                customers.data.map(customer =>
-                    temp.push(insert(customer.id, customer.name, customer.email, customer.address, customer.city, customer.state, customer.postalCode, customer.mobile_no, customer.tel_no))
+            setLoading(true)
+            const temp = []
+            await baseUrlWithAuth.get(auditTrailList).then((audits) => {
+                audits.data.map(audit =>
+                    temp.push(insert(audit.id, `${audit.User.lastName} ${audit.User.firstName}`, audit.action, audit.Store.name, audit.createdAt, audit.value))
                 )
             })
-            setData(temp)
+            setData(...data, temp)
             setLoading(false)
         }
 
-        getData().then(ignored => {})
+        getData().then(ignored => {
+        })
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -42,7 +43,7 @@ export const Customers = () => {
                 <MUIDataTable
                     title={
                         <Typography variant="h6">
-                            Customer List
+                            Audit Trail
                             {loading &&
                             <CircularProgress size={24} style={{marginLeft: 15, position: 'relative', top: 4}}/>}
                         </Typography>
@@ -56,4 +57,4 @@ export const Customers = () => {
     )
 }
 
-
+export default AuditTrail
