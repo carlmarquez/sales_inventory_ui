@@ -7,7 +7,11 @@ body, html{
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
+}
+
+@media print {
+  body {-webkit-print-color-adjust: exact;}
 }
 
 #root{

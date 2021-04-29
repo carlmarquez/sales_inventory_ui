@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from './Title';
@@ -24,7 +24,7 @@ export default function ChartSales() {
     const theme = useTheme();
 
     return (
-        <React.Fragment>
+        <Fragment>
             <Title>Today Sales: </Title>
             <ResponsiveContainer>
                 <LineChart
@@ -43,12 +43,12 @@ export default function ChartSales() {
                             position="left"
                             style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
                         >
-                            Sales ($)
+                            Sales (₱)
                         </Label>
                     </YAxis>
                     <Line type="monotone" dataKey="amount" stroke={theme.palette.primary.main} dot={false} />
                 </LineChart>
             </ResponsiveContainer>
-        </React.Fragment>
+        </Fragment>
     );
 }

@@ -34,7 +34,7 @@ const StoreBranch = () => {
         const temp = []
         await baseUrlWithAuth.get(storeList).then((stores) => {
             stores.data.map(store =>
-                temp.push(insert(store.id, store.name, store.email, store.address, store.city, store.state, store.postalCode, store.mobile_no, store.tel_no))
+                temp.push(insert(store.code, store.location, store.email, store.postalCode, store.mobile_no, store.tel_no))
             )
         })
         setData(temp)

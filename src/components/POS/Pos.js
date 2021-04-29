@@ -3,11 +3,16 @@ import ItemList from "./ItemBuy/ItemList";
 import InputItem from "./InputItem/InputItem";
 import ProductList from "./ProductList/ProductList";
 import {style} from "./PosStyle";
-import {useEffect, useState} from "react";
+import {useEffect, useState, Fragment, lazy} from "react";
 import {baseUrlWithAuth} from "../mainUI/BaseUrlWithAuth";
 import {productList} from "../../utils/ServerEndPoint";
 
-const Pos = ({setPosOn,user}) => {
+const CustomerExistDialog = lazy(() => import(`./checkout/CustomerExistDialog`))
+const CustomerForm = lazy(() => import(`./checkout/CustomerForm`))
+const FindCustomer = lazy(() => import(`./checkout/FindCustomer`))
+const Receipt = lazy(() => import(`./checkout/Receipt`))
+
+const Pos = ({setPosOn, user}) => {
     const classes = style()
 
     const [products, setProducts] = useState([])
@@ -15,6 +20,12 @@ const Pos = ({setPosOn,user}) => {
     const [itemBuy, setItemBuy] = useState([])
     const [qty, setQty] = useState(1)
     const [totalPrice, setTotalPrice] = useState(0)
+
+    // dialog
+    const [checkOutDialog, setCheckOutDialog] = useState(false)
+    const [customerFormDialog, setCustomerFormDialog] = useState(false)
+    const [findCustomerDialog, setFindCustomerDialog] = useState(false)
+    const [printReceipt, setPrintReceipt] = useState(false)
 
     useEffect(() => {
         const temp = []
@@ -93,6 +104,7 @@ const Pos = ({setPosOn,user}) => {
 
     const checkOut = () => {
 
+        setCheckOutDialog(true)
     }
 
     const logout = () => {
@@ -102,40 +114,63 @@ const Pos = ({setPosOn,user}) => {
     }
 
     const switchUser = () => {
-        if(user.role === 1){
+        if (user.role === 1) {
             alert("can't switch")
             return;
         }
         setPosOn(false)
     }
 
+    const print = () => {
+        setPrintReceipt(true)
+        alert("wew")
+    }
+
     return (
-        <Grid container className={classes.root}>
-            <Grid container item md={3} className={classes.left}>
-                <p className={classes.leftText}>Sales And Inventory</p>
-                <Divider className={classes.divider} light/>
+        <Fragment>
+            <CustomerExistDialog
+                registerCustomer={setCustomerFormDialog}
+                findCustomer={setFindCustomerDialog}
+                dialog={checkOutDialog}
+                print={print}
+                cancel={() => setCheckOutDialog(false)}/>
 
-                <ItemList
-                    totalPrice={totalPrice}
-                    items={itemBuy}
-                    classes={classes}/>
 
-                <InputItem qty={qty}
-                           setQty={setQty}
-                           code={code}
-                           setCode={setCode}
-                           buy={buy}
-                           classes={classes}
-                />
+            {
+                printReceipt?   <Receipt dialog={printReceipt} cancel={() => setPrintReceipt(false)}/>: null
+            }
+            <FindCustomer dialog={findCustomerDialog} closeDialog={() => setFindCustomerDialog(false)}/>
+
+            <CustomerForm dialog={customerFormDialog} closeDialog={() => setCustomerFormDialog(false)}/>
+
+
+            <Grid container className={classes.root}>
+                <Grid container item md={3} className={classes.left}>
+                    <p className={classes.leftText}>Sales And Inventory</p>
+                    <Divider className={classes.divider} light/>
+
+                    <ItemList
+                        totalPrice={totalPrice}
+                        items={itemBuy}
+                        classes={classes}/>
+
+                    <InputItem qty={qty}
+                               setQty={setQty}
+                               code={code}
+                               setCode={setCode}
+                               buy={buy}
+                               classes={classes}
+                    />
+                </Grid>
+                <Grid container item md={9} className={classes.right}>
+                    <ProductList logout={logout}
+                                 checkOut={checkOut}
+                                 switchUser={switchUser}
+                                 user={user}
+                                 data={products}/>
+                </Grid>
             </Grid>
-            <Grid container item md={9} className={classes.right}>
-                <ProductList logout={logout}
-                             checkOut={checkOut}
-                             switchUser={switchUser}
-                             user={user}
-                             data={products}/>
-            </Grid>
-        </Grid>
+        </Fragment>
     )
 }
 

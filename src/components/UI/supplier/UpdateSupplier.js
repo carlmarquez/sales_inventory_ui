@@ -121,10 +121,6 @@ const UpdateSupplier = (
 
                         <DialogTitle id="add-student">Update Supplier</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                Insert if you have any note when updating supplier
-                            </DialogContentText>
-
                             <Response showError={error}
                                       errorTitle={errorTitle}
                                       errorMessage={errorMessage}
@@ -134,7 +130,7 @@ const UpdateSupplier = (
                             />
 
                             <Grid container spacing={1}>
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={6} xs={12}>
                                     <TextField autoFocus
                                                margin="dense"
                                                id="supplier-name"
@@ -149,7 +145,7 @@ const UpdateSupplier = (
 
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={6} xs={12}>
                                     <TextField
                                         margin="dense"
                                         id="supplier-email"
@@ -163,7 +159,7 @@ const UpdateSupplier = (
                                     />
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={8} xs={12}>
                                     <TextField
                                         margin="dense"
                                         id="address"
@@ -177,7 +173,7 @@ const UpdateSupplier = (
                                     />
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={2} xs={12}>
                                     <TextField
                                         margin="dense"
                                         id="city"
@@ -191,21 +187,8 @@ const UpdateSupplier = (
                                     />
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
-                                    <TextField
-                                        margin="dense"
-                                        id="state"
-                                        label="State"
-                                        type="text"
-                                        fullWidth
-                                        variant="outlined"
-                                        name='state'
-                                        value={state}
-                                        onChange={e => setState(e.target.value)}
-                                    />
-                                </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={2} xs={12}>
                                     <TextField
                                         margin="dense"
                                         id="postal"

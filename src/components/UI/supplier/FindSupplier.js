@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -66,10 +65,6 @@ const FindSupplier = (
 
             <DialogTitle id="add-student">Find Supplier</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    if you have note for this add  or delete it
-                </DialogContentText>
-
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
@@ -77,8 +72,6 @@ const FindSupplier = (
                           successMessage={"Product Find Success"}
                           closeSnackBar={() => setShow(false)}
                 />
-
-
                 <br/>
 
                 <Grid container spacing={1}>
