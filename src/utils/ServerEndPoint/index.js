@@ -1,5 +1,5 @@
 export const
-    serverEndpoint = 'https://sales-inventory-server.herokuapp.com',
+    serverEndpoint = 'https://sales-inventory-server.herokuapp.com/',
 
     // Auth
     login = 'login',
