@@ -3,6 +3,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -11,7 +12,6 @@ import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {storeInsert} from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
-import UniqueWord from "../../../utils/uniqueWord/UniqueWord";
 
 
 const StoreRegister = (
@@ -22,8 +22,11 @@ const StoreRegister = (
 
     }) => {
 
-    const [location, setLocation] = useState('')
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [address, setAddress] = useState('')
+    const [city, setCity] = useState('')
+    const [state, setState] = useState('')
     const [postalCode, setPostalCode] = useState('')
     const [mobileNo, setMobileNo] = useState('')
     const [telNo, setTelNo] = useState('')
@@ -45,23 +48,32 @@ const StoreRegister = (
 
         event.preventDefault()
 
-        if (location.trim().length === 0) {
+        if (name.trim().length === 0) {
             alert("Please enter store name")
             return
         }
 
+        if(email.trim().length === 0){
+            alert("Please enter a email")
+            return
+        }
         const data = {
-            location,
-            code: UniqueWord,
+            name: name,
             email: email,
+            address: address.trim().length === 0? '':address,
+            city: city.trim().length ===0?'':city,
+            state: state.trim().length ===0? '': state,
             postalCode: postalCode.length ===0? 1: postalCode,
             mobile_no: mobileNo.trim().length===0? '': mobileNo,
             tel_no: telNo.trim().length === 0? '': telNo
         }
         baseUrlWithAuth.post(storeInsert, data).then(ignored => {
             Reload()
-            setLocation('')
+            setName('')
             setEmail('')
+            setAddress('')
+            setState('')
+            setCity('')
             setPostalCode('')
             setTelNo('')
             setMobileNo('')
@@ -89,6 +101,9 @@ const StoreRegister = (
             <DialogTitle id="add-student">Register Store Branch</DialogTitle>
 
             <DialogContent>
+                <DialogContentText>
+                    Insert if you have any note
+                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}
@@ -102,13 +117,14 @@ const StoreRegister = (
                     <Grid item md={4} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Location"
+                                   id="store-name"
+                                   label="Store Name"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
                                    name='store-name'
-                                   value={location}
-                                   onChange={(e) => setLocation(e.target.value)}
+                                   value={name}
+                                   onChange={(e) => setName(e.target.value)}
                         />
 
                     </Grid>
@@ -130,7 +146,50 @@ const StoreRegister = (
                     <Grid item md={4} xs={12}>
                         <TextField
                                    margin="dense"
-                                   label="Postal Code"
+                                   id="address"
+                                   label="Home Address"
+                                   type="text"
+                                   fullWidth
+                                   variant="outlined"
+                                   name='address'
+                                   value={address}
+                                   onChange={(e) => setAddress(e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item md={4} xs={12}>
+                        <TextField
+                                   margin="dense"
+                                   id="city"
+                                   label="City"
+                                   type="text"
+                                   fullWidth
+                                   variant="outlined"
+                                   name='city'
+                                   value={city}
+                                   onChange={(e) => setCity(e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item md={4} xs={12}>
+                        <TextField
+                                   margin="dense"
+                                   id="state"
+                                   label="State"
+                                   type="text"
+                                   fullWidth
+                                   variant="outlined"
+                                   name='state'
+                                   value={state}
+                                   onChange={e => setState(e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item md={4} xs={12}>
+                        <TextField
+                                   margin="dense"
+                                   id="postal"
+                                   label="postal code"
                                    type="text"
                                    fullWidth
                                    variant="outlined"

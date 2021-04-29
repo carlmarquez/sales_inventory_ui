@@ -18,7 +18,7 @@ const style = makeStyles(() => ({
     },
     tableHead: {
         fontWeight: 'bold'
-    },
+    }
 }))
 
 

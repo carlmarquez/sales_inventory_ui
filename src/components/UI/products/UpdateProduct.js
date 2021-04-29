@@ -5,7 +5,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle, FormControl,
-    Grid, InputLabel, Select,
+    Grid,
     TextField
 } from "@material-ui/core"
 import {useState, Fragment, useEffect} from "react";
@@ -28,18 +28,17 @@ const ProductRegister = (
         suppliers,
         images,
         reload,
-        type
     }) => {
 
 
     const [brand, setBrand] = useState('')
     const [name, setName] = useState('')
-    const [productTypeId,setProductTypeId] = useState()
+    const [type, setType] = useState('')
     const [price, setPrice] = useState(1)
     const [qty, setQty] = useState(1)
-    const [supplier, setSupplier] = useState(null)
-    const [store, setStore] = useState(null)
-    const [photo, setPhoto] = useState(null)
+    const [supplier, setSupplier] = useState('')
+    const [store, setStore] = useState('')
+    const [photo, setPhoto] = useState('')
     const [code, setCode] = useState('')
     const [oldCode,setOldCode] = useState('')
 
@@ -92,7 +91,7 @@ const ProductRegister = (
             CreateError(setProductNameError, setProductNameErrorMessage, 'Please enter product name')
         }
 
-        if (!productTypeId) {
+        if (type.trim().length === 0) {
             error = true
             CreateError(setProductTypeError, setProductTypeErrorMessage, 'Please enter a product type')
         }
@@ -118,7 +117,7 @@ const ProductRegister = (
                 brand,
                 code,
                 name,
-                ProductTypeId: productTypeId,
+                type,
                 price:price,
                 status: 'Available',
                 photo,
@@ -130,7 +129,7 @@ const ProductRegister = (
             await baseUrlWithAuth.post(productUpdate, data).then(ignored => {
                 setBrand('')
                 setName('')
-                setProductTypeId()
+                setType('')
                 setPrice(1)
                 setCode('')
                 setPhoto('')
@@ -172,7 +171,7 @@ const ProductRegister = (
         setBrand(product.brand)
         setCode(product.code)
         setName(product.name)
-        setProductTypeId(product.ProductType.id)
+        setType(product.type)
         setPrice(product.price)
 
         const storeTemp = stores.find(e => e.id === product.StoreId)
@@ -223,7 +222,7 @@ const ProductRegister = (
                                             options={images}
                                             getOptionLabel={(option) => option}
                                             getOptionSelected={(option, value) => option === value}
-                                            onChange={(event, value) => value===null?setPhoto(''):setPhoto(value)}
+                                            onChange={(event, value) => setPhoto(value)}
                                             renderInput={(params) =>
                                                 <TextField
                                                     error={productImagesError}
@@ -264,28 +263,17 @@ const ProductRegister = (
                                 </Grid>
 
                                 <Grid item md={4} xs={12}>
-                                    <FormControl
+                                    <TextField
                                         error={productTypeError}
-                                        variant="outlined" margin='dense' fullWidth>
-                                        <InputLabel
-                                            htmlFor="role">{productTypeError? productTypeErrorMessage: 'Product Type'}</InputLabel>
-                                        <Select
-
-                                            required
-                                            native
-                                            label={'Product Type'}
-                                            inputProps={{
-                                                name: 'Product Type',
-                                                id: 'role',
-                                            }}
-                                            value={productTypeId}
-                                            onChange={(e => setProductTypeId(e.target.value))}
-                                        >
-                                            {
-                                                type.map(e => <option value={e.id} key={e.id}>{e.name}</option>)
-                                            }
-                                        </Select>
-                                    </FormControl>
+                                        helperText={productTypeErrorMessage}
+                                        margin="dense"
+                                        label="Product Type"
+                                        type="text"
+                                        fullWidth
+                                        variant="outlined"
+                                        value={type}
+                                        onChange={(e) => setType(e.target.value)}
+                                    />
                                 </Grid>
 
                                 <Grid item md={4} xs={12}>
@@ -308,7 +296,7 @@ const ProductRegister = (
                                             options={stores}
                                             getOptionLabel={(option) => option.name + ' ' + option.state}
                                             getOptionSelected={(option, value) => option.id === value.id}
-                                            onChange={(event, value) => value === null ? setStore() : setStore(value)}
+                                            onChange={(event, value) => value === null ? setStore('') : setStore(value)}
                                             renderInput={(params) =>
                                                 <TextField
                                                     error={storeIdError}
@@ -328,7 +316,7 @@ const ProductRegister = (
                                             options={suppliers}
                                             getOptionLabel={(option) => option.name + ' ' + option.state}
                                             getOptionSelected={(option, value) => option.id === value.id}
-                                            onChange={(event, value) => value === null ? setSupplier() : setSupplier(value)}
+                                            onChange={(event, value) => value === null ? setSupplier('') : setSupplier(value)}
                                             renderInput={(params) =>
                                                 <TextField
                                                     error={supplierIdError}
@@ -373,7 +361,7 @@ const ProductRegister = (
                         <DialogActions>
 
                             <Button type={"submit"} color='primary' onClick={register}>
-                                Update
+                                Register
                             </Button>
                             <Button onClick={() => closeDialog(false)} color='secondary'>
                                 Cancel

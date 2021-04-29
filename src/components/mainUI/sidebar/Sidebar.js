@@ -1,3 +1,4 @@
+
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import {ListItem, ListItemIcon, ListItemText, SwipeableDrawer} from "@material-ui/core";
@@ -14,8 +15,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import ComputerIcon from '@material-ui/icons/Computer';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
-import SettingsIcon from '@material-ui/icons/Settings';
-
+import {Redirect} from "react-router";
 const useStyles = makeStyles({
     list: {
         width: 240,
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function Sidebar({setPosOn, open, handleDrawerClose, handleDrawerOpen}) {
+export default function Sidebar({setPosOn,open, handleDrawerClose, handleDrawerOpen}) {
 
     const classes = useStyles();
 
@@ -99,24 +99,21 @@ export default function Sidebar({setPosOn, open, handleDrawerClose, handleDrawer
                             </ListItemIcon>
                             <ListItemText primary="Transaction"/>
                         </ListItem>
-                        <ListItem component={NavLink} to="/audit" button>
-                            <ListItemIcon>
-                                <ListIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary="Audit Trail"/>
-                        </ListItem>
-                        <ListItem component={NavLink} to="/settings" button>
-                            <ListItemIcon>
-                                <SettingsIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary="Settings"/>
-                        </ListItem>
+
+
                         <ListItem onClick={() => setPosOn(true)} button>
                             <ListItemIcon>
                                 <ComputerIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Pos"/>
                         </ListItem>
+                        <ListItem component={NavLink} to="/audit" button>
+                            <ListItemIcon>
+                                <ListIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Audit Trail"/>
+                        </ListItem>
+
                     </div>
                 </List>
             </div>

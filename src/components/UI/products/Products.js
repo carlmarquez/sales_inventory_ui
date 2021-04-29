@@ -5,7 +5,7 @@ import MUIDataTable from 'mui-datatables'
 import Typography from "@material-ui/core/Typography";
 import {useEffect, useState, Fragment} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {ListProductType, productImages, productList, storeList, supplierList} from "../../../utils/ServerEndPoint";
+import {productImages, productList, storeList, supplierList} from "../../../utils/ServerEndPoint";
 import ProductRegister from "./ProductRegister";
 import ProductPhoto from "./ProductPhoto";
 import DeleteProduct from "./DeleteProduct";
@@ -38,7 +38,6 @@ export const Products = () => {
     const [suppliers, setSuppliers] = useState([])
     const [images, setImages] = useState([])
     const [branch, setBranch] = useState('0')
-    const [productType, setProductType] = useState([])
 
     useEffect( () => {
 
@@ -59,7 +58,6 @@ export const Products = () => {
 
         }
 
-        getProductType().then(ignored => {})
         data().then(ignored => {})
 
     }, [])
@@ -109,7 +107,7 @@ export const Products = () => {
             }
         }).then((products) => {
             products.data.map(product =>
-                temp.push(insert(product.code, product.brand, product.name, product.ProductType.name, product.price, product.Supplier.name, product.Store.location, product.status))
+                temp.push(insert(product.code, product.brand, product.name, product.type, product.price, product.Supplier.name, product.Store.name, product.status))
             )
         }).catch(e => {
             console.log(e)
@@ -118,19 +116,6 @@ export const Products = () => {
         setLoading(false)
 
     }
-
-    const getProductType = async () => {
-        await baseUrlWithAuth.get(ListProductType)
-            .then(e => {
-                const temp = []
-                e.data.map(productType => temp.push(productType))
-                setProductType(temp)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-    }
-
 
     const Reload = async () => {
         await changeBranch(branch)
@@ -146,7 +131,6 @@ export const Products = () => {
                              dialog={registerDialog}
                              closeDialog={() => setRegisterDialog(false)}
                              reload={Reload}
-                             type={productType}
             />
 
             <UpdateProduct images={images}
@@ -154,9 +138,7 @@ export const Products = () => {
                            suppliers={suppliers}
                            dialog={updateDialog}
                            closeDialog={() => setUpdateDialog(false)}
-                           reload={Reload}
-                           type={productType}
-            />
+                           reload={Reload}/>
 
             <ProductPhoto insertPicture={insertImage} dialog={photoUpload} closeDialog={() => setPhotoUpload(false)}/>
 

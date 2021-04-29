@@ -1,16 +1,24 @@
 export const StoreTable = [
     {
-        name: "code",
-        label: "Code"
+        name: "name",
+        label: "Store Name"
     },
     {
-        name: "location",
-        label: "Location",
+        name: "email",
+        label: "Email",
 
     },
     {
-        name: 'email',
-        label: 'Email'
+        name: "address",
+        label: "Address",
+    },
+    {
+        name: "city",
+        label: "City",
+    },
+    {
+        name: "state",
+        label: "State"
     },
     {
         name: "postalCode",
@@ -26,6 +34,6 @@ export const StoreTable = [
     },
 ];
 
-export function InsertStore(code, location,email, postalCode,mobile_no,telno) {
-    return {code,location,email,postalCode,mobile_no,telno}
+export function InsertStore(id, name,email, address,city,state, postalCode,mobile_no,telno) {
+    return {id, name,email, address,city,state, postalCode,mobile_no,telno, update:id, delete: id}
 }

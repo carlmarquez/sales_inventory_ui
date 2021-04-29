@@ -24,7 +24,7 @@ const FindStore = (
         updateClose
     }) => {
 
-    const [code, setCode] = useState('')
+    const [email, setEmail] = useState('')
 
 
     // for snack bar
@@ -37,7 +37,7 @@ const FindStore = (
     const register = async (event) => {
         event.preventDefault()
 
-        await baseUrlWithAuth.post(storeFind, {code}).then(e => {
+        await baseUrlWithAuth.post(storeFind, {email}).then(e => {
             setError(false)
             updateStore(e.data[0])
             closeDialog(false)
@@ -58,15 +58,17 @@ const FindStore = (
     return <Dialog
         open={dialog}
         onClose={cancel}
-        aria-labelledby="StoreFind"
+        aria-labelledby="add-student"
         maxWidth={"md"}
         fullWidth
     >
         <form noValidate={false} onSubmit={register}>
 
-            <DialogTitle>Find Store Branch</DialogTitle>
+            <DialogTitle id="add-student">Find Store</DialogTitle>
             <DialogContent>
-
+                <DialogContentText>
+                    if you have note for this add  or delete it
+                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}
@@ -84,12 +86,12 @@ const FindStore = (
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Enter Store Code"
+                            label="Enter Store Email"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
                 </Grid>

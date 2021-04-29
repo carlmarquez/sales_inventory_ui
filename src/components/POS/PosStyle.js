@@ -5,6 +5,7 @@ export const style = makeStyles(() => ({
         height: '100%',
         backgroundColor:'#F8F8F8',
         fontFamily: 'Oswald,sans-serif'
+
     },
     left: {
         height: '100%',
@@ -16,8 +17,8 @@ export const style = makeStyles(() => ({
     leftText:{
         fontSize: 30,
         marginTop:10,
-            marginBottom:6.5,
-            marginLeft: 10
+        marginBottom:6.5,
+        marginLeft: 10
     },
     right: {
         height: '100%'

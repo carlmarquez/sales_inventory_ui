@@ -22,7 +22,7 @@ const StoreDelete = (
 
 
     // user data
-    const [code, setCode] = useState('')
+    const [email, setEmail] = useState('')
 
 
     // for snack bar
@@ -40,8 +40,8 @@ const StoreDelete = (
 
         event.preventDefault()
 
-        baseUrlWithAuth.post(storeDelete, {code}).then(ignored => {
-            setCode('')
+        baseUrlWithAuth.post(storeDelete, {email}).then(ignored => {
+            setEmail('')
             setShow(true)
             Reload()
         }).catch(error => {
@@ -64,9 +64,11 @@ const StoreDelete = (
         <form noValidate={false} onSubmit={register}>
 
 
-            <DialogTitle id="add-student">Remove Store Branch</DialogTitle>
+            <DialogTitle id="add-student">Remove Store</DialogTitle>
             <DialogContent>
-
+                <DialogContentText>
+                    Insert Supplier Email to delete the supplier
+                </DialogContentText>
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
@@ -79,12 +81,12 @@ const StoreDelete = (
                     <Grid item md={12} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Enter Store Code"
+                                   label="Email"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
-                                   value={code}
-                                   onChange={(e) => setCode(e.target.value)}
+                                   value={email}
+                                   onChange={(e) => setEmail(e.target.value)}
                         />
 
                     </Grid>

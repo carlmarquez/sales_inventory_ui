@@ -39,17 +39,21 @@ export const Supplier = () => {
     }, [reload])
 
 
+    const insertData = (supplier) => {
+        const newData = [supplier, ...data]
+        setData(newData)
+    }
+
 
     const Reload = async () => {
         setLoading(true)
         const temp = []
         await baseUrlWithAuth.get(supplierList).then((suppliers) =>
             suppliers.data.map(supplier =>
-                temp.push(insert(supplier.id, supplier.name, supplier.email, supplier.address, supplier.city, supplier.postalCode, supplier.mobile_no, supplier.tel_no,))
+                temp.push(insert(supplier.id, supplier.name, supplier.email, supplier.address, supplier.city, supplier.state, supplier.postalCode, supplier.mobile_no, supplier.tel_no))
             )
         )
 
-        console.log(temp)
         setData(temp)
         setLoading(false)
     }
@@ -60,8 +64,9 @@ export const Supplier = () => {
                 Reload={Reload}
                 dialog={deleteDialog}
                 closeDialog={() => setDeleteDialog(false)}/>
-            <SupplierRegister dialog={dialog} closeDialog={() => setDialog(false)} Reload={Reload}/>
-            <UpdateSupplier Reload={Reload} dialog={supplierDialog} closeDialog={() => setSupplierDialog(false)}/>
+            <SupplierRegister dialog={dialog} closeDialog={() => setDialog(false)} insertData={insertData}/>
+            <UpdateSupplier Reload={Reload} dialog={supplierDialog} closeDialog={() => setSupplierDialog(false)}
+                            insertData={insertData}/>
             <Grid component="main" className={classes.root}>
                 <Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
                     <Toolbar>

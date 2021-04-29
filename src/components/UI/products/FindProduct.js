@@ -69,6 +69,9 @@ const FindProduct = (
 
             <DialogTitle id="add-student">Find Product</DialogTitle>
             <DialogContent>
+                <DialogContentText>
+                    Enter your product code
+                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}

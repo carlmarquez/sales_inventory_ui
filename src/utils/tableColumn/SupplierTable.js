@@ -17,6 +17,10 @@ export const SupplierTable = [
         label: "City",
     },
     {
+        name: "state",
+        label: "State"
+    },
+    {
         name: "postalCode",
         label: "Postal code"
     },
@@ -30,6 +34,6 @@ export const SupplierTable = [
     }
 ];
 
-export function InsertSupplier(id, name,email, address,city, postalCode,mobile_no,telno) {
-    return {id, name,email, address,city, postalCode,mobile_no,telno}
+export function InsertSupplier(id, name,email, address,city,state, postalCode,mobile_no,telno) {
+    return {id, name,email, address,city,state, postalCode,mobile_no,telno}
 }

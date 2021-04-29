@@ -7,10 +7,9 @@ import {Switch} from 'react-router';
 import {useEffect, Fragment, Suspense, useState, lazy} from 'react'
 import {baseUrlNoAuth} from "./utils/axios/BaseUrl";
 import {tokenData} from "./utils/ServerEndPoint";
-import Skeleton from "@material-ui/lab/Skeleton";
-import Receipt from "./components/POS/checkout/Receipt";
-const MainUi = lazy(() => import(`./components/mainUI/MainUI`));
-const Pos = lazy(() => import(`./components/POS/Pos`))
+
+const MainUi = lazy(() => import('./components/mainUI/MainUI'));
+const Pos = lazy(() => import('./components/POS/Pos'))
 
 
 const App = () => {
@@ -45,10 +44,9 @@ const App = () => {
 
     }, [user])
 
-
     return (
         <Router>
-            <Suspense fallback={<Skeleton variant={"rect"} animation="wave" style={{width: '100%', height: '70%'}}  />}>
+            <Suspense fallback={'loding'}>
                 {
                     token === null ? <Login setUser={setUser}
                                             setToken={setToken}/> :
@@ -56,11 +54,12 @@ const App = () => {
 
                             {
                                 posOn === true ?
-                                    <Route  path="/">
+                                    <Route path="/">
                                         <Pos  setPosOn={setPosOn} user={user}/>
                                     </Route>
 
                                     :
+
                                     <Fragment>
                                         <MainUi setPosOn={setPosOn} setUser={setUser} user={user}/>
                                     </Fragment>

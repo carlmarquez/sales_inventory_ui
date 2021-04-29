@@ -65,11 +65,14 @@ const DeleteSupplier = (
 
             <DialogTitle id="add-student">Remove Supplier</DialogTitle>
             <DialogContent>
+                <DialogContentText>
+                    Insert Supplier Email to delete the supplier
+                </DialogContentText>
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
                           showSnackBar={show}
-                          successMessage='Supplier Delete Success'
+                          successMessage='Supplier Register Success'
                           closeSnackBar={close}
                 />
 
@@ -77,7 +80,7 @@ const DeleteSupplier = (
                     <Grid item md={12} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Enter Supplier Email"
+                                   label="Email"
                                    type="text"
                                    fullWidth
                                    variant="outlined"

@@ -26,12 +26,15 @@ const StoreUpdate = (
 
 
     // data
-    const [location, setLocation] = useState('')
+    const [id,setId] = useState()
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [address, setAddress] = useState('')
+    const [city, setCity] = useState('')
+    const [state, setState] = useState('')
     const [postalCode, setPostalCode] = useState('')
     const [mobileNo, setMobileNo] = useState('')
     const [telNo, setTelNo] = useState('')
-    const [code,setCode] =useState('')
 
 
     const [findStoreDialog, setFindStoreDialog] = useState(false)
@@ -45,17 +48,23 @@ const StoreUpdate = (
 
     const register = async (event) => {
         event.preventDefault()
+        if(name.trim().length === 0){
+            alert("Please enter a name")
+            return
+        }
 
-
-        if(location.trim().length === 0){
+        if(email.trim().length === 0){
             alert("Please enter a email")
             return
         }
 
         const data = {
-            location,
-            code,
+            id,
+            name: name,
             email: email,
+            address: address.trim().length === 0? '':address,
+            city: city.trim().length ===0?'':city,
+            state: state.trim().length ===0? '': state,
             postalCode: postalCode.length ===0? 1: postalCode,
             mobile_no: mobileNo.trim().length===0? '': mobileNo,
             tel_no: telNo.trim().length === 0? '': telNo
@@ -67,7 +76,6 @@ const StoreUpdate = (
             alert("Update Success")
             setFindStoreDialog(true)
         }).catch(error => {
-            console.log(error)
             const response = error.response.data
             setErrorMessage(response.message)
             setErrorTitle(response.title)
@@ -82,13 +90,16 @@ const StoreUpdate = (
 
     // update
     const updateStore = (store) => {
-        setLocation('')
+
+        setId(store.id)
+        setName(store.name)
+        setAddress(store.address)
+        setCity(store.city)
         setEmail(store.email)
         setMobileNo(store.mobile_no)
         setPostalCode(store.postalCode)
+        setState(store.state)
         setTelNo(store.tel_no)
-        setLocation(store.location)
-        setCode(store.code)
         setFindStoreDialog(false)
     }
 
@@ -126,12 +137,14 @@ const StoreUpdate = (
                                 <Grid item md={4} xs={12}>
                                     <TextField autoFocus
                                                margin="dense"
-                                               label="Location"
+                                               id="supplier-name"
+                                               label="Store Name"
                                                type="text"
                                                fullWidth
                                                variant="outlined"
-                                               value={location}
-                                               onChange={(e) => setLocation(e.target.value)}
+                                               name='supplier-name'
+                                               value={name}
+                                               onChange={(e) => setName(e.target.value)}
                                     />
 
                                 </Grid>
@@ -139,10 +152,12 @@ const StoreUpdate = (
                                 <Grid item md={4} xs={12}>
                                     <TextField
                                         margin="dense"
+                                        id="supplier-email"
                                         label="Store Email"
                                         type="email"
                                         fullWidth
                                         variant="outlined"
+                                        name='supplier-email'
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
@@ -151,10 +166,54 @@ const StoreUpdate = (
                                 <Grid item md={4} xs={12}>
                                     <TextField
                                         margin="dense"
+                                        id="address"
+                                        label="Home Address"
+                                        type="text"
+                                        fullWidth
+                                        variant="outlined"
+                                        name='address'
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                    />
+                                </Grid>
+
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        id="city"
+                                        label="City"
+                                        type="text"
+                                        fullWidth
+                                        variant="outlined"
+                                        name='city'
+                                        value={city}
+                                        onChange={(e) => setCity(e.target.value)}
+                                    />
+                                </Grid>
+
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        id="state"
+                                        label="State"
+                                        type="text"
+                                        fullWidth
+                                        variant="outlined"
+                                        name='state'
+                                        value={state}
+                                        onChange={e => setState(e.target.value)}
+                                    />
+                                </Grid>
+
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        id="postal"
                                         label="postal code"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
+                                        name='postal'
                                         value={postalCode}
                                         onChange={e => setPostalCode(e.target.value)}
                                     />
@@ -163,10 +222,12 @@ const StoreUpdate = (
                                 <Grid item md={6} xs={12}>
                                     <TextField
                                         margin="dense"
+                                        id="mobile-no"
                                         label="Mobile No."
                                         type="text"
                                         fullWidth
                                         variant="outlined"
+                                        name='mobile-no'
                                         value={mobileNo}
                                         onChange={e => setMobileNo(e.target.value)}
                                     />
@@ -175,10 +236,12 @@ const StoreUpdate = (
                                 <Grid item md={6} xs={12}>
                                     <TextField
                                         margin="dense"
+                                        id="telNo"
                                         label="Telephone No."
                                         type="text"
                                         fullWidth
                                         variant="outlined"
+                                        name='telNo'
                                         value={telNo}
                                         onChange={e => setTelNo(e.target.value)}
                                     />

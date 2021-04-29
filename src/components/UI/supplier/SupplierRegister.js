@@ -3,6 +3,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     Grid, TextField
 } from "@material-ui/core"
@@ -16,7 +17,7 @@ const SupplierRegister = (
     {
         closeDialog,
         dialog,
-        Reload
+        insertData
 
     }) => {
 
@@ -24,6 +25,7 @@ const SupplierRegister = (
     const [email, setEmail] = useState('')
     const [address, setAddress] = useState('')
     const [city, setCity] = useState('')
+    const [state, setState] = useState('')
     const [postalCode, setPostalCode] = useState('')
     const [mobileNo, setMobileNo] = useState('')
     const [telNo, setTelNo] = useState('')
@@ -60,17 +62,19 @@ const SupplierRegister = (
             email: email,
             address: address,
             city: city,
+            state: state,
             postalCode: postalCode.length ===0? 1: postalCode,
             mobile_no: mobileNo,
             tel_no: telNo
         }
 
 
-        baseUrlWithAuth.post(supplierInsert, data).then(ignored => {
-            Reload()
+        baseUrlWithAuth.post(supplierInsert, data).then(e => {
+            insertData(data)
             setName('')
             setEmail('')
             setAddress('')
+            setState('')
             setCity('')
             setPostalCode('')
             setTelNo('')
@@ -98,7 +102,9 @@ const SupplierRegister = (
 
             <DialogTitle id="add-student">Register Supplier</DialogTitle>
             <DialogContent>
-
+                <DialogContentText>
+                    Insert if you have any note
+                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}
@@ -109,44 +115,50 @@ const SupplierRegister = (
                 />
 
                 <Grid container spacing={1}>
-                    <Grid item md={6} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Company Name"
+                                   id="supplier-name"
+                                   label="Supplier Name"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
+                                   name='supplier-name'
                                    value={name}
                                    onChange={(e) => setName(e.target.value)}
                         />
 
                     </Grid>
 
-                    <Grid item md={6} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                                    margin="dense"
-                                   label="Company Email"
+                                   id="supplier-email"
+                                   label="Supplier Email"
                                    type="email"
                                    fullWidth
                                    variant="outlined"
+                                   name='supplier-email'
                                    value={email}
                                    onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
 
-                    <Grid item md={8} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                                    margin="dense"
+                                   id="address"
                                    label="Home Address"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
+                                   name='address'
                                    value={address}
                                    onChange={(e) => setAddress(e.target.value)}
                         />
                     </Grid>
 
-                    <Grid item md={2} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                                    margin="dense"
                                    id="city"
@@ -160,8 +172,21 @@ const SupplierRegister = (
                         />
                     </Grid>
 
+                    <Grid item md={4} xs={12}>
+                        <TextField
+                                   margin="dense"
+                                   id="state"
+                                   label="State"
+                                   type="text"
+                                   fullWidth
+                                   variant="outlined"
+                                   name='state'
+                                   value={state}
+                                   onChange={e => setState(e.target.value)}
+                        />
+                    </Grid>
 
-                    <Grid item md={2} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                                    margin="dense"
                                    id="postal"

@@ -3,7 +3,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         height: '100%',
-        overflowY: 'auto'
     },
     content: {
         width: '100%',

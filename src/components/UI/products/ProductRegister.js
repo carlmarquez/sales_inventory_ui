@@ -5,7 +5,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle, FormControl,
-    Grid, InputLabel, Select,
+    Grid,
     TextField
 } from "@material-ui/core"
 import {useState} from "react";
@@ -26,28 +26,27 @@ const ProductRegister = (
         stores,
         suppliers,
         images,
-        reload,
-        type
+        reload
     }) => {
 
 
     // for form value
     const [brand, setBrand] = useState('')
     const [name, setName] = useState('')
+    const [type, setType] = useState('')
     const [price, setPrice] = useState(1)
     const [qty, setQty] = useState(1)
     const [supplier, setSupplier] = useState('')
     const [store, setStore] = useState('')
     const [photo, setPhoto] = useState('')
     const [code, setCode] = useState('')
-    const [productTypeId,setProductTypeId] = useState(0)
 
 
     // for snack bar
     const [showing, setShowing] = useState(false)
     const [error, setError] = useState(false)
     const [errorTitle, setErrorTitle] = useState('')
-    const [errorMessage, setErrorMessage] = useState(type.length >0?type[0].id:null)
+    const [errorMessage, setErrorMessage] = useState('')
 
     // form error
     const [productImagesError, setProductImagesError] = useState(false)
@@ -89,7 +88,7 @@ const ProductRegister = (
             CreateError(setProductNameError, setProductNameErrorMessage, 'Please enter product name')
         }
 
-        if (productTypeId===null) {
+        if (type.trim().length === 0) {
             error = true
             CreateError(setProductTypeError, setProductTypeErrorMessage, 'Please enter a product type')
         }
@@ -115,7 +114,7 @@ const ProductRegister = (
                 brand,
                 code,
                 name,
-                ProductTypeId: productTypeId,
+                type,
                 price: price,
                 status: 'Available',
                 photo,
@@ -129,6 +128,7 @@ const ProductRegister = (
                 setShowing(true)
                 setBrand('')
                 setName('')
+                setType('')
                 setPrice(1)
                 setCode('')
                 setQty(1)
@@ -164,6 +164,9 @@ const ProductRegister = (
 
             <DialogTitle id="add-student">Register Product</DialogTitle>
             <DialogContent>
+                <DialogContentText>
+                    Insert Message
+                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}
@@ -223,28 +226,17 @@ const ProductRegister = (
                     </Grid>
 
                     <Grid item md={4} xs={12}>
-                        <FormControl
+                        <TextField
                             error={productTypeError}
-                            variant="outlined" margin='dense' fullWidth>
-                            <InputLabel
-                                htmlFor="role">{productTypeError? productTypeErrorMessage: 'Product Type'}</InputLabel>
-                            <Select
-
-                                required
-                                native
-                                label={productTypeError? productTypeErrorMessage: 'Product Type'}
-                                inputProps={{
-                                    name: 'Product Type',
-                                    id: 'role',
-                                }}
-                                value={productTypeId}
-                                onChange={(e => setProductTypeId(e.target.value))}
-                            >
-                                {
-                                    type.map(e => <option value={e.id} key={e.id}>{e.name}</option>)
-                                }
-                            </Select>
-                        </FormControl>
+                            helperText={productTypeErrorMessage}
+                            margin="dense"
+                            label="Product Type"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                        />
                     </Grid>
 
                     <Grid item md={4} xs={12}>
@@ -264,7 +256,7 @@ const ProductRegister = (
                             <Autocomplete
                                 size={"small"}
                                 options={stores}
-                                getOptionLabel={(option) => option.location}
+                                getOptionLabel={(option) => option.name + ' ' + option.state}
                                 getOptionSelected={(option, value) => option.id === value.id}
                                 onChange={(event, value) => value === null ? setStore('') : setStore(value)}
                                 renderInput={(params) =>
@@ -283,7 +275,7 @@ const ProductRegister = (
                             <Autocomplete
                                 size={"small"}
                                 options={suppliers}
-                                getOptionLabel={(option) => option.name}
+                                getOptionLabel={(option) => option.name + ' ' + option.state}
                                 getOptionSelected={(option, value) => option.id === value.id}
                                 onChange={(event, value) => value === null ? setSupplier('') : setSupplier(value)}
                                 renderInput={(params) =>
