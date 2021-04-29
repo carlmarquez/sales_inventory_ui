@@ -3,6 +3,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -15,7 +16,7 @@ import {
 import Response from "../../../utils/Response/Response";
 
 
-const FindSupplier = (
+const FindCustomer = (
     {
         closeDialog,
         dialog,
@@ -50,7 +51,7 @@ const FindSupplier = (
     }
 
     const cancel = () => {
-        updateClose(false)
+        // updateClose(false)
         closeDialog(false)
     }
 
@@ -63,8 +64,10 @@ const FindSupplier = (
     >
         <form onSubmit={register}>
 
-            <DialogTitle id="add-student">Find Supplier</DialogTitle>
+            <DialogTitle id="add-student">Find Customer</DialogTitle>
             <DialogContent>
+
+
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
@@ -72,6 +75,8 @@ const FindSupplier = (
                           successMessage={"Product Find Success"}
                           closeSnackBar={() => setShow(false)}
                 />
+
+
                 <br/>
 
                 <Grid container spacing={1}>
@@ -79,7 +84,7 @@ const FindSupplier = (
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Enter Supplier Email"
+                            label="Enter Customer Email"
                             type="text"
                             fullWidth
                             variant="outlined"
@@ -104,4 +109,4 @@ const FindSupplier = (
 }
 
 
-export default FindSupplier
+export default FindCustomer

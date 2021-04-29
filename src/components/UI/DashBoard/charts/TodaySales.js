@@ -21,7 +21,7 @@ export default function TodaySales() {
         <React.Fragment>
             <Title>Today Sales</Title>
             <Typography component="p" variant="h4">
-                $3,024.00
+                ₱3,024.00
             </Typography>
             <Typography color="textSecondary" className={classes.depositContext}>
                 on 15 March, 2019
