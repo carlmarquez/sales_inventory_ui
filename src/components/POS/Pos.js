@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 import {baseUrlWithAuth} from "../mainUI/BaseUrlWithAuth";
 import {productList} from "../../utils/ServerEndPoint";
 
-const Pos = ({user}) => {
+const Pos = ({setPosOn,user}) => {
     const classes = style()
 
     const [products, setProducts] = useState([])
@@ -102,7 +102,11 @@ const Pos = ({user}) => {
     }
 
     const switchUser = () => {
-
+        if(user.role === 1){
+            alert("can't switch")
+            return;
+        }
+        setPosOn(false)
     }
 
     return (
@@ -129,7 +133,6 @@ const Pos = ({user}) => {
                              checkOut={checkOut}
                              switchUser={switchUser}
                              user={user}
-
                              data={products}/>
             </Grid>
         </Grid>

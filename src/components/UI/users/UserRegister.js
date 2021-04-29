@@ -267,7 +267,7 @@ const UserRegister = (
                                 }}
                                 onChange={(event => setRole(parseInt(event.target.value)))}
                             >
-                                <option value='1'>User</option>
+                                <option value='1'>Cashier</option>
                                 <option value='2'>Manager</option>
                                 <option value='3'>Owner</option>
                             </Select>

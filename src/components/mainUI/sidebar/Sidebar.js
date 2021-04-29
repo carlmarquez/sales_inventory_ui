@@ -15,6 +15,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import ComputerIcon from '@material-ui/icons/Computer';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
+import {Redirect} from "react-router";
 const useStyles = makeStyles({
     list: {
         width: 240,
@@ -28,10 +29,9 @@ const useStyles = makeStyles({
     },
 });
 
-export default function Sidebar({open, handleDrawerClose, handleDrawerOpen}) {
+export default function Sidebar({setPosOn,open, handleDrawerClose, handleDrawerOpen}) {
 
     const classes = useStyles();
-
 
     return (
         <SwipeableDrawer
@@ -101,7 +101,7 @@ export default function Sidebar({open, handleDrawerClose, handleDrawerOpen}) {
                         </ListItem>
 
 
-                        <ListItem component={NavLink} to="/pos" button>
+                        <ListItem onClick={() => setPosOn(true)} button>
                             <ListItemIcon>
                                 <ComputerIcon/>
                             </ListItemIcon>

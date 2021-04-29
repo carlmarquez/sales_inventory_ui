@@ -18,7 +18,7 @@ import {Customers} from "../UI/customer/CustomerTable";
 import DashBoard from "../UI/DashBoard/DashBoard";
 import AuditTrail from "../UI/AuditTrail/AuditTrail";
 
-export default function MainUI({user,setUser}) {
+export default function MainUI({setPosOn,user,setUser}) {
     const classes = style();
 
 
@@ -41,6 +41,7 @@ export default function MainUI({user,setUser}) {
                 open={open}
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
+                setPosOn={setPosOn}
             />
 
 

@@ -54,14 +54,14 @@ const App = () => {
 
                             {
                                 posOn === true ?
-                                    <Route exact path="/">
-                                        <Pos user={user}/>
+                                    <Route path="/">
+                                        <Pos  setPosOn={setPosOn} user={user}/>
                                     </Route>
 
                                     :
 
                                     <Fragment>
-                                        <MainUi setUser={setUser} user={user}/>
+                                        <MainUi setPosOn={setPosOn} setUser={setUser} user={user}/>
                                     </Fragment>
                             }
 
