@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle, FormControl,
     Grid, InputLabel, Select,
     TextField
@@ -24,7 +23,6 @@ const UserRegister = (
         Reload,
         stores
     }) => {
-
 
     // user data
     const [firstName, setFirstName] = useState('')
@@ -160,9 +158,6 @@ const UserRegister = (
 
             <DialogTitle id="add-student">Register User</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Insert if you have any note
-                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}
@@ -267,7 +262,7 @@ const UserRegister = (
                                 }}
                                 onChange={(event => setRole(parseInt(event.target.value)))}
                             >
-                                <option value='1'>User</option>
+                                <option value='1'>Cashier</option>
                                 <option value='2'>Manager</option>
                                 <option value='3'>Owner</option>
                             </Select>
@@ -280,7 +275,7 @@ const UserRegister = (
                                 size={"small"}
                                 id="combo-box-demo"
                                 options={stores}
-                                getOptionLabel={(option) => option.name + ' ' + option.state}
+                                getOptionLabel={(option) => option.location}
                                 getOptionSelected={(option, value) => option.id === value.id}
                                 onChange={(event, value) => setStoreId(value!==null?value.id:'')}
                                 renderInput={(params) =>

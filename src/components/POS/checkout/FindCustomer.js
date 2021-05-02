@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -11,7 +10,7 @@ import {
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
-    supplierFind
+    CustomerFind
 } from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 
@@ -20,8 +19,8 @@ const FindCustomer = (
     {
         closeDialog,
         dialog,
-        updateSupplier,
-        updateClose
+        print,
+        setCustomer
     }) => {
 
     const [email, setEmail] = useState('')
@@ -37,10 +36,9 @@ const FindCustomer = (
     const register = async (event) => {
         event.preventDefault()
 
-        await baseUrlWithAuth.post(supplierFind, {email}).then(e => {
-            setError(false)
-            updateSupplier(e.data[0])
-            closeDialog(false)
+        await baseUrlWithAuth.post(CustomerFind, {email}).then(e => {
+            setCustomer(e.data)
+            print()
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)

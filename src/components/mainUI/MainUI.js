@@ -18,6 +18,9 @@ import {Customers} from "../UI/customer/CustomerTable";
 import DashBoard from "../UI/DashBoard/DashBoard";
 import AuditTrail from "../UI/AuditTrail/AuditTrail";
 import Settings from "../UI/settings/Settings";
+import CriticalStocks from "../UI/CriticalStock/CriticalStocks";
+import Transfer from "../UI/transferData/Transfer";
+// import Transfer from "../UI/transferData/Transfer";
 
 export default function MainUI({setPosOn,user,setUser}) {
     const classes = style();
@@ -52,38 +55,45 @@ export default function MainUI({setPosOn,user,setUser}) {
                 {
                     <Suspense fallback={<Skeleton/>}>
                         <Switch>
+
+                            <Route path={"/transferProducts"}>
+                                <Transfer user={user}/>
+                            </Route>
                             <Route exact path={'/'}>
-                                <DashBoard/>
+                                <DashBoard user={user}/>
                             </Route>
                             <Route exact path={"/users"}>
-                                <Users/>
+                                <Users user={user}/>
                             </Route>
                             <Route path={"/products"}>
-                                <Products/>
+                                <Products user={user}/>
                             </Route>
 
                             <Route exact path={"/stores"}>
-                                <StoreBranch/>
+                                <StoreBranch user={user}/>
                             </Route>
 
                             <Route path={"/sales"}>
-                                <Sales/>
+                                <Sales user={user}/>
                             </Route>
 
                             <Route exact path={"/transaction"}>
-                                <Transaction/>
+                                <Transaction user={user}/>
                             </Route>
                             <Route path={"/supplier"}>
-                                <Supplier/>
+                                <Supplier user={user}/>
                             </Route>
                             <Route path={"/customer"}>
-                                <Customers/>
+                                <Customers user={user}/>
                             </Route>
                             <Route path={"/audit"}>
-                                <AuditTrail/>
+                                <AuditTrail user={user}/>
+                            </Route>
+                            <Route path={"/critical"}>
+                                <CriticalStocks user={user}/>
                             </Route>
                             <Route path={"/settings"}>
-                                <Settings/>
+                                <Settings user={user}/>
                             </Route>
 
                         </Switch>

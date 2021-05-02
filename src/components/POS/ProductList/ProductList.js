@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Divider, makeStyles, TextField, Tooltip} from "@material-ui/core"
+import {Button, CircularProgress, Divider, makeStyles, TextField, Tooltip} from "@material-ui/core"
 import ProductCard from "./ProductCard"
 import {useEffect, useState} from "react"
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
@@ -33,7 +33,6 @@ const style = makeStyles(() => ({
         flex: 1,
         overflowY: 'auto',
         marginBottom: 10,
-        maxHeight: '70%'
     },
     product: {
         display: 'flex',
@@ -63,28 +62,28 @@ const style = makeStyles(() => ({
     },
     productTopButtonRight: {
         display: 'flex',
-        justifyContent:'center',
-        alignItems:"center"
+        justifyContent: 'center',
+        alignItems: "center"
     }
 }))
 
 
-const ProductList = ({user,switchUser,logout,checkOut, data}) => {
+const ProductList = ({user, switchUser, logout, checkOut, data}) => {
 
-    const [search,setSearch] = useState('')
-    const [tempData,setTempData] = useState([])
+    const [search, setSearch] = useState('')
+    const [tempData, setTempData] = useState([])
 
     const [loading, setLoading] = useState(true)
 
     const searchChange = (e) => {
         setSearch(e)
-       if(e.length !== 0) {
-           const result = data.filter(product => product.name.toUpperCase().startsWith(search.toUpperCase()))
-           setTempData(result)
-           return
-       }
+        if (e.length !== 0) {
+            const result = data.filter(product => product.name.toUpperCase().startsWith(search.toUpperCase()))
+            setTempData(result)
+            return
+        }
 
-       setTempData(data)
+        setTempData(data)
     }
 
     useEffect(() => {
@@ -100,7 +99,9 @@ const ProductList = ({user,switchUser,logout,checkOut, data}) => {
                 <Button onClick={checkOut} variant={'contained'} style={{marginLeft: 20}} color={'primary'}
                         disableElevation>CheckOut</Button>
 
-                <TextField id="outlined-basic" value={search} onChange={(e) => {searchChange(e.target.value)}} size="small" placeholder={"Search"} variant="outlined"/>
+                <TextField id="outlined-basic" value={search} onChange={(e) => {
+                    searchChange(e.target.value)
+                }} size="small" placeholder={"Search"} variant="outlined"/>
 
                 <div className={classes.productTopButtonRight}>
                     <p>{`${user.firstName} ${user.lastName}`}</p>
@@ -126,10 +127,13 @@ const ProductList = ({user,switchUser,logout,checkOut, data}) => {
 
             <div className={classes.products}>
                 {
-                    loading ? <CircularProgress style={{marginTop: 20}}/> :
-                        tempData.slice(0, 20).map(product =>
-                            <ProductCard key={product.id} price={product.price} classes={classes} name={product.name}
-                                         id={product.code} picture={product.photo}/>)
+                    data.length === 0 ? <h1>No Product Available In This Branch</h1> :
+                        loading ? <CircularProgress style={{marginTop: 20}}/> :
+                            tempData.slice(0, 20).map(product =>
+                                <ProductCard key={product.id} price={product.price} classes={classes}
+                                             name={product.name}
+                                             id={product.code} picture={product.photo}/>)
+
                 }
 
             </div>

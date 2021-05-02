@@ -1,5 +1,5 @@
 export const
-    serverEndpoint = 'https://sales-inventory-server.herokuapp.com/',
+    serverEndpoint = 'http://sales-inventory-server.herokuapp.com',
 
     // Auth
     login = 'login',
@@ -30,8 +30,10 @@ export const
     storeUpdate = 'store/update',
     storeDelete = 'store/delete',
 
-    // User
+    // transaction
     transactionList = 'transaction/list',
+    transactionInsert = 'transaction/insert',
+    transactionFind = 'transaction/find',
 
     // Sales
     salesList = 'sales/list',
@@ -45,6 +47,8 @@ export const
 
     // Customer
     CustomerList = 'customer/list',
+    CustomerFind = 'customer/find',
+    CustomerInsert = 'customer/insert',
 
     // upload
     productPhoto = 'upload',
@@ -55,13 +59,17 @@ export const
 
     // dashboard
     dashBoardData = 'dashboard/data',
+    dashBoardTodayAudit = 'dashboard/audit',
+    dashBoardTodayTransaction = 'dashboard/transaction',
+    dashBoardTopTenSales = 'dashboard/topTenSales',
 
     // setting
     InsertProductType  = 'setting/insertProductType',
     DeleteProductType = 'setting/deleteProductType',
     SetCriticalStock = 'setting/setCriticalStock',
     GetCriticalStock = 'setting/getCriticalStock',
-    ListProductType = 'setting/productTypeList'
+    ListProductType = 'setting/productTypeList',
+    getCriticalStockProduct = 'setting/getCriticalStockProduct'
 
 
 

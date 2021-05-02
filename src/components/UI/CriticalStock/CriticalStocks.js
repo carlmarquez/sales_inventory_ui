@@ -1,34 +1,36 @@
-import style, {TableOptions as options} from '../_style/TableStyle'
-import {Paper, Grid, CircularProgress} from "@material-ui/core";
-import {AuditTrailTable as columns, InsertAudit as insert} from '../../../utils/tableColumn/AuditTrail'
-import MUIDataTable from 'mui-datatables'
-import Typography from "@material-ui/core/Typography";
-import {useEffect, useState} from "react";
+import { useEffect, useState} from "react";
+import style, {TableOptions as options} from "../_style/TableStyle";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {auditTrailList} from "../../../utils/ServerEndPoint";
+import {getCriticalStockProduct} from "../../../utils/ServerEndPoint";
+import {CriticalStockTable as columns, InsertCriticalStock as insert} from "../../../utils/tableColumn/CriticalStocks";
+import {CircularProgress, Grid, Paper} from "@material-ui/core";
+import MUIDataTable from "mui-datatables";
+import Typography from "@material-ui/core/Typography";
+const CriticalStocks = () => {
 
-export const AuditTrail = () => {
+
     const classes = style()
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-
         const getData = async () => {
             setLoading(true)
             const temp = []
-            await baseUrlWithAuth.get(auditTrailList).then((audits) => {
-                audits.data.map(audit =>
-                    temp.push(insert(audit.id, `${audit.User.lastName} ${audit.User.firstName}`, audit.action, audit.Store.location, audit.createdAt, audit.value))
-                )
+            await baseUrlWithAuth.get(getCriticalStockProduct).then((stocks) => {
+                stocks.data.map(stock => temp.push(insert(stock.product.code,stock.product.name,stock.branch.location)))
+            }).catch(error => {
+                console.log(error)
             })
-            setData(...data, temp)
-            setLoading(false)
+            setData(temp)
         }
 
-        getData().then(ignored => {
+
+        getData().then(ignored => {}).catch(error => {
+            console.log(error)
         })
+        setLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -43,7 +45,7 @@ export const AuditTrail = () => {
                 <MUIDataTable
                     title={
                         <Typography variant="h6">
-                            Audit Trail
+                            Critical Stock List
                             {loading &&
                             <CircularProgress size={24} style={{marginLeft: 15, position: 'relative', top: 4}}/>}
                         </Typography>
@@ -57,4 +59,4 @@ export const AuditTrail = () => {
     )
 }
 
-export default AuditTrail
+export default CriticalStocks

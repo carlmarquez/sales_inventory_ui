@@ -2,9 +2,10 @@ import {makeStyles} from "@material-ui/core";
 
 export const style = makeStyles(() => ({
     root: {
-        height: '100%',
+        height: '100vh',
         backgroundColor:'#F8F8F8',
-        fontFamily: 'Oswald,sans-serif'
+        fontFamily: 'Oswald,sans-serif',
+        overflowY:'hidden'
     },
     left: {
         height: '100%',

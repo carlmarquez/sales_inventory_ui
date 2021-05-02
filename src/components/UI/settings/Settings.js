@@ -79,7 +79,6 @@ const Setting = () => {
             .then((ignored) => {
                 alert('Update Success')
             }).catch(error => {
-            console.log(error)
             alert(error.response.data)
         })
     }

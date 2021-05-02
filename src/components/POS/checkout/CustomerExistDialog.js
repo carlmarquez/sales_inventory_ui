@@ -10,14 +10,28 @@ import {
 } from "@material-ui/core";
 import Response from "../../../utils/Response/Response";
 import Divider from "@material-ui/core/Divider";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
+import {CustomerFind, dashBoardData} from "../../../utils/ServerEndPoint";
 
 const CustomerExistDialog = ({
                                  dialog,
                                  cancel,
                                  findCustomer,
                                  registerCustomer,
-                                 print
+                                 print,
+                                 setCustomer
                              }) => {
+
+    const namelessClick = async () => {
+
+        await baseUrlWithAuth.post(CustomerFind, {email:'Hidden@email.com'}).then(e => {
+           setCustomer(e.data)
+        }).catch(error => {
+            console.log(error)
+        })
+
+        print()
+    }
     return (
         <Dialog
             open={dialog}
@@ -56,7 +70,7 @@ const CustomerExistDialog = ({
                                 disableElevation>No</Button>
                         </Grid>
                         <Grid item md={12}>
-                            <Button onClick={print}
+                            <Button onClick={namelessClick}
                                     fullWidth variant={"contained"}
                                     style={{backgroundColor:'#333', color:'white'}}
                                     disableElevation>Nameless Transaction</Button>

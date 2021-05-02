@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -21,7 +20,8 @@ const FindProduct = (
         closeDialog,
         dialog,
         updateProduct,
-        updateClose
+        updateClose,
+        branch
     }) => {
 
 
@@ -38,7 +38,7 @@ const FindProduct = (
     const register = async (event) => {
         event.preventDefault()
 
-        await baseUrlWithAuth.post(productFind, {code}).then(e => {
+        await baseUrlWithAuth.post(productFind, {code,branch}).then(e => {
             setCode('')
             setError(false)
             setShow(true)

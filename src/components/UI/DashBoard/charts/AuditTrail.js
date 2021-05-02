@@ -1,4 +1,4 @@
-import {Fragment} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,31 +8,18 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import Button from "@material-ui/core/Button";
+import {baseUrlWithAuth} from "../../../mainUI/BaseUrlWithAuth";
+import {dashBoardTodayAudit} from "../../../../utils/ServerEndPoint";
+import {MonthsWord} from "../../../../utils/date/ConvertMonthWord";
+
+
 
 // Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-    return { id, date, name, shipTo, paymentMethod, amount };
+function createData(date, location, user, action, value) {
+    return { date:MonthsWord(date), location, user, action, value };
 }
 
-const rows = [
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
 
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-
-];
 
 function preventDefault(event) {
     event.preventDefault();
@@ -45,15 +32,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RecentAuditTrail() {
+
+    const [rows,setRows] = useState([])
+    const temp = []
+    useEffect(() => {
+        const getData = async () => {
+            await baseUrlWithAuth.get(dashBoardTodayAudit).then(recentAudit => {
+                recentAudit.data.map(recent => {
+                    console.log(recent)
+                    temp.push(createData(recent.createdAt,recent.Store.location, recent.User.email, recent.action,recent.value))
+                })
+            }).catch(error => {
+                console.log(error)
+            })
+            console.log(temp)
+            setRows(temp)
+        }
+        getData().then(ignored => {})
+    },[])
+
     const classes = useStyles();
     return (
         <Fragment>
             <Title>Recent AuditTrail</Title>
-            <Table size="small">
+            <Table size="small"  style={{paddingBottom: 10}}>
                 <TableHead>
                     <TableRow>
                         <TableCell>Date</TableCell>
-                        <TableCell>Id</TableCell>
+                        <TableCell>Location</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Action</TableCell>
                         <TableCell align="right">Value</TableCell>
@@ -63,21 +69,15 @@ export default function RecentAuditTrail() {
                     {rows.map((row, id) => (
                         <TableRow key={id}>
                             <TableCell>{row.date}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.shipTo}</TableCell>
-                            <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell>{row.location}</TableCell>
+                            <TableCell>{row.user}</TableCell>
+                            <TableCell>{row.action}</TableCell>
+                            <TableCell align="right">{row.value}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-            <div className={classes.seeMore}>
-                <Link color="primary" to={"/"} onClick={preventDefault}>
-                    <Button variant='contained' color='primary'>
-                        Reload
-                    </Button>
-                </Link>
-            </div>
+
         </Fragment>
     );
 }

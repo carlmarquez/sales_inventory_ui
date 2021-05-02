@@ -10,20 +10,19 @@ import {
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
-    userFind
+    transactionFind
 } from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 
 
-const FindUser = (
+const FindTransaction = (
     {
         closeDialog,
         dialog,
-        updateUser,
-        updateClose
+        updateTransaction,
     }) => {
 
-    const [email, setEmail] = useState('')
+    const [code, setCode] = useState('')
 
 
     // for snack bar
@@ -36,13 +35,10 @@ const FindUser = (
     const register = async (event) => {
         event.preventDefault()
 
-        await baseUrlWithAuth.post(userFind, {email}).then(e => {
-            setShow(true)
+        await baseUrlWithAuth.post(transactionFind, {code}).then(e => {
             setError(false)
-            closeDialog(false)
-
-            updateUser(e.data[0])
-
+            setCode('')
+            updateTransaction(e.data)
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)
@@ -53,7 +49,6 @@ const FindUser = (
     }
 
     const cancel = () => {
-        updateClose(false)
         closeDialog(false)
     }
 
@@ -66,9 +61,8 @@ const FindUser = (
     >
         <form onSubmit={register}>
 
-            <DialogTitle id="add-student">Find User</DialogTitle>
+            <DialogTitle id="add-student">Find Transaction</DialogTitle>
             <DialogContent>
-
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
@@ -76,8 +70,6 @@ const FindUser = (
                           successMessage={"Product Find Success"}
                           closeSnackBar={() => setShow(false)}
                 />
-
-
                 <br/>
 
                 <Grid container spacing={1}>
@@ -85,12 +77,12 @@ const FindUser = (
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Enter User Email"
+                            label="Enter Transaction Code"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
                         />
                     </Grid>
                 </Grid>
@@ -110,4 +102,4 @@ const FindUser = (
 }
 
 
-export default FindUser
+export default FindTransaction

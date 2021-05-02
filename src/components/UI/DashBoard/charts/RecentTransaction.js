@@ -1,6 +1,6 @@
-import {Fragment} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,48 +8,42 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import Button from "@material-ui/core/Button";
+import {dashBoardTodayTransaction} from "../../../../utils/ServerEndPoint";
+import {baseUrlWithAuth} from "../../../mainUI/BaseUrlWithAuth";
+import {MonthsWord} from "../../../../utils/date/ConvertMonthWord";
 
 // Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-    return { id, date, name, shipTo, paymentMethod, amount };
+function createData(date, transaction, branch, user, value) {
+    return {date: MonthsWord(date), transaction, branch, user, value};
 }
 
-const rows = [
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
+export default function RecentTransaction({setTotal}) {
+    const [rows, setRows] = useState([])
+    useEffect(() => {
+        const temp = []
+        let amount = 0
+        const getData = async () => {
+           await baseUrlWithAuth.get(dashBoardTodayTransaction)
+                .then(transactions => {
+                    transactions.data.map(transaction => {
+                        amount += transaction.amount
+                        temp.push(createData(transaction.createdAt, transaction.code, transaction.Store.location, transaction.User.email, transaction.amount))
+                    })
+                }).catch(error => {
+                   console.log(error)
+            })
 
-    createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-    createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-    createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-    createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-    createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
 
-];
+            setRows(temp)
+            setTotal(amount)
+        }
 
-function preventDefault(event) {
-    event.preventDefault();
-}
-
-const useStyles = makeStyles((theme) => ({
-    seeMore: {
-        marginTop: theme.spacing(3),
-    },
-}));
-
-export default function RecentTransaction() {
-    const classes = useStyles();
+        getData().then(ignored => {})
+    }, [])
     return (
         <Fragment>
             <Title>Recent Transaction</Title>
-            <Table size="small">
+            <Table size="small" style={{paddingBottom: 10}}>
                 <TableHead>
                     <TableRow>
                         <TableCell>Date</TableCell>
@@ -60,24 +54,18 @@ export default function RecentTransaction() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row,id) => (
+                    {rows.map((row, id) => (
                         <TableRow key={id}>
                             <TableCell>{row.date}</TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.shipTo}</TableCell>
-                            <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell>{row.transaction}</TableCell>
+                            <TableCell>{row.branch}</TableCell>
+                            <TableCell>{row.user}</TableCell>
+                            <TableCell align="right">{row.value}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-            <div className={classes.seeMore}>
-                <Link color="primary" to={"/"} onClick={preventDefault}>
-                   <Button variant='contained' color='primary'>
-                       Reload
-                   </Button>
-                </Link>
-            </div>
+
         </Fragment>
     );
 }

@@ -1,5 +1,10 @@
+import { MonthsWord} from "../date/ConvertMonthWord";
 
 export const SalesTable = [
+    {
+        name: "productCode",
+        label: "Product Code"
+    },
     {
         name: "productName",
         label: "Product Name",
@@ -10,16 +15,8 @@ export const SalesTable = [
         label: "Price"
     },
     {
-        name: "qty",
-        label: "QTY",
-    },
-    {
-        name: "total",
-        label: "Total"
-    },
-    {
         name: "transaction",
-        label: "Transaction ID",
+        label: "Transaction Code",
     },
 
     {
@@ -28,6 +25,7 @@ export const SalesTable = [
     },
 ];
 
-export function InsertSales(id,productName,price,qty,total,transaction, date) {
-    return {productName,price,qty,total,transaction, date}
+export function InsertSales(productCode,productName,price,transaction, dateTime) {
+
+    return {productCode,productName,price,transaction, date: MonthsWord(dateTime)}
 }

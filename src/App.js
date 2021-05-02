@@ -1,26 +1,26 @@
 import {
     BrowserRouter as Router, Route,
-    Redirect
+
 } from "react-router-dom";
 import Login from "./components/Login/Logins";
 import {Switch} from 'react-router';
-import {useEffect, Fragment, Suspense, useState, lazy} from 'react'
+
 import {baseUrlNoAuth} from "./utils/axios/BaseUrl";
 import {tokenData} from "./utils/ServerEndPoint";
 import Skeleton from "@material-ui/lab/Skeleton";
-import Receipt from "./components/POS/checkout/Receipt";
+import {lazy, useEffect, useState, Fragment,Suspense} from 'react'
+
 const MainUi = lazy(() => import(`./components/mainUI/MainUI`));
 const Pos = lazy(() => import(`./components/POS/Pos`))
-
-
 const App = () => {
+
 
     const [token, setToken] = useState(null)
     const [user, setUser] = useState()
     const [posOn, setPosOn] = useState(false)
 
 
-    // localStorage.clear()
+// localStorage.clear()
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('jars-token')
@@ -45,10 +45,10 @@ const App = () => {
 
     }, [user])
 
-
     return (
+
         <Router>
-            <Suspense fallback={<Skeleton variant={"rect"} animation="wave" style={{width: '100%', height: '70%'}}  />}>
+            <Suspense fallback={<Skeleton variant={"rect"} animation="wave" style={{width: '100%', height: '70%'}}/>}>
                 {
                     token === null ? <Login setUser={setUser}
                                             setToken={setToken}/> :
@@ -56,8 +56,8 @@ const App = () => {
 
                             {
                                 posOn === true ?
-                                    <Route  path="/">
-                                        <Pos  setPosOn={setPosOn} user={user}/>
+                                    <Route path="/">
+                                        <Pos setPosOn={setPosOn} user={user}/>
                                     </Route>
 
                                     :
@@ -71,12 +71,11 @@ const App = () => {
                 }
             </Suspense>
 
-            <Redirect to={"/"}/>
+            {/*<Redirect to={"/"}/>*/}
         </Router>
 
     )
 
 }
-
 
 export default App;

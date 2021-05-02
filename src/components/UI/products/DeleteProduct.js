@@ -18,7 +18,8 @@ const DeleteProduct = (
     {
         closeDialog,
         dialog,
-        deleteProduct
+        deleteProduct,
+        branch
     }) => {
 
     const [qty, setQty] = useState(1)
@@ -41,7 +42,8 @@ const DeleteProduct = (
 
         const data = {
             code,
-            qty: parseInt(qty)
+            qty: parseInt(qty),
+            branch
         }
 
         baseUrlWithAuth.post(productDelete, data).then(e => {
@@ -69,9 +71,6 @@ const DeleteProduct = (
 
             <DialogTitle id="add-student">Delete Product</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Delete Product Note
-                </DialogContentText>
 
                 <Response showError={error}
                           errorTitle={errorTitle}

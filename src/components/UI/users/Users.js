@@ -40,7 +40,7 @@ export const Users = () => {
 
         await baseUrlWithAuth.get(userList).then(e =>
             e.data.map(user =>
-                item.push(insert(user.id,user.email,user.firstName,user.lastName,user.role, user.Store.name, user.status))
+                item.push(insert(user.id,user.email,user.firstName,user.lastName,user.role, user.Store.location, user.status))
             )
         )
 

@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -110,9 +109,6 @@ const StoreUpdate = (
 
                         <DialogTitle id="add-student">Update Supplier</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                Insert if you have any note when updating supplier
-                            </DialogContentText>
 
                             <Response showError={error}
                                       errorTitle={errorTitle}
@@ -151,7 +147,7 @@ const StoreUpdate = (
                                 <Grid item md={4} xs={12}>
                                     <TextField
                                         margin="dense"
-                                        label="postal code"
+                                        label="Postal Code"
                                         type="text"
                                         fullWidth
                                         variant="outlined"

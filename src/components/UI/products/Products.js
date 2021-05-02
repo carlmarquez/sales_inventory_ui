@@ -19,7 +19,7 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import UpdateProduct from "./UpdateProduct";
 
-export const Products = () => {
+export const Products = ({user}) => {
     const classes = style()
 
     // for dialog
@@ -37,13 +37,13 @@ export const Products = () => {
     const [stores, setStores] = useState([])
     const [suppliers, setSuppliers] = useState([])
     const [images, setImages] = useState([])
-    const [branch, setBranch] = useState('0')
     const [productType, setProductType] = useState([])
-
-    useEffect( () => {
-
-        const  data = async () => {
-            await changeBranch('0')
+    const [productStatus, setProductStatus] = useState('Available')
+    const [branch, setBranch] = useState(user.StoreId)
+    const role = user.role
+    useEffect(() => {
+        const data = async () => {
+            await changeBranch()
 
             await baseUrlWithAuth.get(storeList).then(e => {
                 setStores(e.data)
@@ -59,10 +59,21 @@ export const Products = () => {
 
         }
 
-        getProductType().then(ignored => {})
-        data().then(ignored => {})
+        getProductType().then(ignored => {
+        })
+        data().then(ignored => {
+        })
 
-    }, [])
+    }, [branch])
+
+    useEffect(() => {
+        setLoading(true)
+        changeBranch().then(ignored => {
+            setLoading(false)
+        }).catch(ignored => {
+            setLoading(false)
+        })
+    }, [productStatus])
 
 
     const insertImage = () => {
@@ -99,13 +110,13 @@ export const Products = () => {
     }
 
 
-    const changeBranch = async (branch) => {
+    const changeBranch = async () => {
         setLoading(true)
-        setBranch(branch)
         const temp = []
-        await baseUrlWithAuth.get(productList,{
+        await baseUrlWithAuth.get(productList, {
             params: {
-                branch: branch
+                branch,
+                status: productStatus
             }
         }).then((products) => {
             products.data.map(product =>
@@ -136,38 +147,50 @@ export const Products = () => {
         await changeBranch(branch)
     }
 
+
     return (
         <Fragment>
             {/*Pop up*/}
 
-            <ProductRegister images={images}
-                             stores={stores}
-                             suppliers={suppliers}
-                             dialog={registerDialog}
-                             closeDialog={() => setRegisterDialog(false)}
-                             reload={Reload}
-                             type={productType}
+            <ProductRegister
+                branch={branch}
+                role={role}
+                images={images}
+                stores={stores}
+                suppliers={suppliers}
+                dialog={registerDialog}
+                closeDialog={() => setRegisterDialog(false)}
+                reload={Reload}
+                type={productType}
             />
 
-            <UpdateProduct images={images}
-                           stores={stores}
-                           suppliers={suppliers}
-                           dialog={updateDialog}
-                           closeDialog={() => setUpdateDialog(false)}
-                           reload={Reload}
-                           type={productType}
+            <UpdateProduct
+                branch={branch}
+                role={role}
+                images={images}
+                stores={stores}
+                suppliers={suppliers}
+                dialog={updateDialog}
+                closeDialog={() => setUpdateDialog(false)}
+                reload={Reload}
+                type={productType}
             />
 
             <ProductPhoto insertPicture={insertImage} dialog={photoUpload} closeDialog={() => setPhotoUpload(false)}/>
 
             <DeleteProduct
+                branch={branch}
                 dialog={deleteDialog}
                 closeDialog={() => setDeleteDialog(false)}
                 deleteProduct={deleteProduct}
             />
 
-            <TransferProduct transfer={Reload} dialog={transferDialog}
-                             closeDialog={() => setTransferDialog(false)}/>
+            <TransferProduct
+                data={data}
+                transfer={Reload}
+                dialog={transferDialog}
+                closeDialog={() => setTransferDialog(false)
+                }/>
 
 
             {/*Table*/}
@@ -196,8 +219,8 @@ export const Products = () => {
                                     <UpdateIcon fontSize={"large"}/>
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="Transfer Product" aria-label="add">
-                                <IconButton onClick={() => setTransferDialog(true)} aria-label="addProduct"
+                            <Tooltip title={'Transfer Product'} aria-label={'Transfer Product'}>
+                                <IconButton onClick={() => setTransferDialog(true)} aria-label={'Transfer Product'}
                                             color={"primary"}>
                                     <CompareArrowsIcon fontSize={"large"}/>
                                 </IconButton>
@@ -210,23 +233,40 @@ export const Products = () => {
                             </Tooltip>
                         </Box>
 
-                        <Box>
+                        <Box style={{display: 'flex'}}>
                             <FormControl variant="outlined" margin='dense' fullWidth>
-                                <InputLabel htmlFor="Branch">Branch</InputLabel>
+                                <InputLabel htmlFor="Branch">Status</InputLabel>
+                                <Select
+                                    native
+                                    value={productStatus}
+                                    label="Status"
+                                    inputProps={{
+                                        name: 'branch',
+                                        id: 'Branch',
+                                    }}
+                                    onChange={(e) => setProductStatus(e.target.value)}
+                                >
+                                    <option value={'Available'}>Available</option>
+                                    <option value={'Sold'}>Sold</option>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl style={{marginLeft: 10}} variant="outlined" margin='dense' fullWidth>
+                                <InputLabel htmlFor="Status">Branch</InputLabel>
                                 <Select
                                     native
                                     value={branch}
                                     label="Branch"
                                     inputProps={{
-                                        name: 'branch',
-                                        id: 'Branch',
+                                        name: 'Status',
+                                        id: 'Status',
                                     }}
-                                    onChange={(event) => changeBranch(event.target.value)}
+                                    onChange={(e) => role === 3 ? setBranch(e.target.value) : null}
                                 >
                                     <option value='0'>All</option>
                                     {
                                         stores.map((e) => {
-                                            return <option key={e.id} value={e.id}>{e.name}</option>
+                                            return <option key={e.id} value={e.id}>{e.location}</option>
                                         })
                                     }
                                 </Select>
@@ -236,6 +276,7 @@ export const Products = () => {
                 </Grid>
                 <Grid item md={12} component={Paper} className={classes.tableContainerWrapper}>
                     <MUIDataTable
+                        rowSel
                         title={
                             <Typography variant="h6">
                                 Product List

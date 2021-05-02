@@ -20,6 +20,7 @@ const Pos = ({setPosOn, user}) => {
     const [itemBuy, setItemBuy] = useState([])
     const [qty, setQty] = useState(1)
     const [totalPrice, setTotalPrice] = useState(0)
+    const [customer, setCustomer] = useState()
 
     // dialog
     const [checkOutDialog, setCheckOutDialog] = useState(false)
@@ -27,13 +28,15 @@ const Pos = ({setPosOn, user}) => {
     const [findCustomerDialog, setFindCustomerDialog] = useState(false)
     const [printReceipt, setPrintReceipt] = useState(false)
 
+
     useEffect(() => {
         const temp = []
         const getData = async () => {
 
             await baseUrlWithAuth.get(productList, {
                 params: {
-                    branch: 1
+                    branch: user.StoreId,
+                    status:'available'
                 }
             }).then(async (products) => {
                 products.data.map(product =>
@@ -56,7 +59,8 @@ const Pos = ({setPosOn, user}) => {
             productBrand: product.brand,
             price: product.price,
             qty,
-            code
+            code,
+            id: product.id
         }
     }
 
@@ -103,7 +107,10 @@ const Pos = ({setPosOn, user}) => {
     }
 
     const checkOut = () => {
-
+        if(itemBuy.length ===0){
+            alert("Please Buy First To Checkout")
+            return
+        }
         setCheckOutDialog(true)
     }
 
@@ -123,12 +130,13 @@ const Pos = ({setPosOn, user}) => {
 
     const print = () => {
         setPrintReceipt(true)
-        alert("wew")
     }
 
+    console.log(customer)
     return (
         <Fragment>
             <CustomerExistDialog
+                setCustomer={setCustomer}
                 registerCustomer={setCustomerFormDialog}
                 findCustomer={setFindCustomerDialog}
                 dialog={checkOutDialog}
@@ -137,9 +145,17 @@ const Pos = ({setPosOn, user}) => {
 
 
             {
-                printReceipt?   <Receipt dialog={printReceipt} cancel={() => setPrintReceipt(false)}/>: null
+                printReceipt ? <Receipt
+                    item={itemBuy}
+                    setItem={setItemBuy}
+                    customer={customer}
+                    initialAmount={totalPrice}
+                    dialog={printReceipt}
+                    user={user}
+                    cancel={() => setPrintReceipt(false)}
+                    posOn={true}/> : null
             }
-            <FindCustomer dialog={findCustomerDialog} closeDialog={() => setFindCustomerDialog(false)}/>
+            <FindCustomer setCustomer={setCustomer} print={print} dialog={findCustomerDialog} closeDialog={() => setFindCustomerDialog(false)}/>
 
             <CustomerForm dialog={customerFormDialog} closeDialog={() => setCustomerFormDialog(false)}/>
 

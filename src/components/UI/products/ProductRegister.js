@@ -3,12 +3,11 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle, FormControl,
     Grid, InputLabel, Select,
     TextField
 } from "@material-ui/core"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
     productInsert
@@ -27,7 +26,9 @@ const ProductRegister = (
         suppliers,
         images,
         reload,
-        type
+        type,
+        role,
+        branch
     }) => {
 
 
@@ -40,14 +41,18 @@ const ProductRegister = (
     const [store, setStore] = useState('')
     const [photo, setPhoto] = useState('')
     const [code, setCode] = useState('')
-    const [productTypeId,setProductTypeId] = useState(0)
+    const [productTypeId, setProductTypeId] = useState(0)
 
+    useEffect(() => {
+        const id = type.length > 0 ? type[0].id : 1
+        setProductTypeId(id)
+    }, [])
 
     // for snack bar
     const [showing, setShowing] = useState(false)
     const [error, setError] = useState(false)
     const [errorTitle, setErrorTitle] = useState('')
-    const [errorMessage, setErrorMessage] = useState(type.length >0?type[0].id:null)
+    const [errorMessage, setErrorMessage] = useState('')
 
     // form error
     const [productImagesError, setProductImagesError] = useState(false)
@@ -89,12 +94,13 @@ const ProductRegister = (
             CreateError(setProductNameError, setProductNameErrorMessage, 'Please enter product name')
         }
 
-        if (productTypeId===null) {
+
+        if (productTypeId === null) {
             error = true
             CreateError(setProductTypeError, setProductTypeErrorMessage, 'Please enter a product type')
         }
 
-        if (!store) {
+        if (!store && role ===3) {
             error = true
             CreateError(setStoreIdError, setStoreIdErrorMessage, 'Please select a branch')
         }
@@ -109,7 +115,6 @@ const ProductRegister = (
             CreateError(setProductCodeError, setProductCodeErrorMessage, 'Please enter a product code')
         }
 
-
         if (!error) {
             const data = {
                 brand,
@@ -120,7 +125,7 @@ const ProductRegister = (
                 status: 'Available',
                 photo,
                 SupplierId: parseInt(supplier.id),
-                StoreId: parseInt(store.id),
+                StoreId: role === 3? parseInt(store.id): branch,
                 qty
             }
 
@@ -227,12 +232,12 @@ const ProductRegister = (
                             error={productTypeError}
                             variant="outlined" margin='dense' fullWidth>
                             <InputLabel
-                                htmlFor="role">{productTypeError? productTypeErrorMessage: 'Product Type'}</InputLabel>
+                                htmlFor="role">{productTypeError ? productTypeErrorMessage : 'Product Type'}</InputLabel>
                             <Select
 
                                 required
                                 native
-                                label={productTypeError? productTypeErrorMessage: 'Product Type'}
+                                label={productTypeError ? productTypeErrorMessage : 'Product Type'}
                                 inputProps={{
                                     name: 'Product Type',
                                     id: 'role',
@@ -259,24 +264,27 @@ const ProductRegister = (
                         />
                     </Grid>
 
-                    <Grid item md={4} xs={12}>
-                        <FormControl variant="outlined" margin='dense' fullWidth>
-                            <Autocomplete
-                                size={"small"}
-                                options={stores}
-                                getOptionLabel={(option) => option.location}
-                                getOptionSelected={(option, value) => option.id === value.id}
-                                onChange={(event, value) => value === null ? setStore('') : setStore(value)}
-                                renderInput={(params) =>
-                                    <TextField
-                                        error={storeIdError}
-                                        helperText={storeIdErrorMessage}
-                                        {...params}
-                                        label="Store"
-                                        variant="outlined"/>}
-                            />
-                        </FormControl>
-                    </Grid>
+                    {
+                        role === 3 ? <Grid item md={4} xs={12}>
+                            <FormControl variant="outlined" margin='dense' fullWidth>
+                                <Autocomplete
+                                    size={"small"}
+                                    options={stores}
+                                    getOptionLabel={(option) => option.location}
+                                    getOptionSelected={(option, value) => option.id === value.id}
+                                    onChange={(event, value) => value === null ? setStore('') : setStore(value)}
+                                    renderInput={(params) =>
+                                        <TextField
+                                            error={storeIdError}
+                                            helperText={storeIdErrorMessage}
+                                            {...params}
+                                            label="Store"
+                                            variant="outlined"/>}
+                                />
+                            </FormControl>
+                        </Grid> : null
+                    }
+
 
                     <Grid item md={4} xs={12}>
                         <FormControl variant="outlined" margin='dense' fullWidth>
@@ -297,7 +305,7 @@ const ProductRegister = (
                         </FormControl>
                     </Grid>
 
-                    <Grid item md={4} xs={12}>
+                    <Grid item md={role === 3? 4: 6} xs={12}>
                         <TextField
                             error={productCodeError}
                             helperText={productCodeErrorMessage}
@@ -312,7 +320,7 @@ const ProductRegister = (
                     </Grid>
 
 
-                    <Grid item md={4} xs={12}>
+                    <Grid item md={role === 3? 4: 6} xs={12}>
                         <TextField
                             margin="dense"
                             label="QTY"

@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {supplierInsert} from "../../../utils/ServerEndPoint";
+import {CustomerInsert} from "../../../utils/ServerEndPoint";
 import {
     Button,
     Dialog,
@@ -46,28 +46,27 @@ const CustomerForm = (
         event.preventDefault()
 
         if (name.trim().length === 0) {
-            alert("Please enter store name")
+            alert("Please Enter Customer Name")
             return
         }
 
-        if (email.trim().length === 0) {
-            alert("Please enter a email")
+        if(email.trim().length ===0){
+            alert("Please Enter Email")
             return
         }
 
         const data = {
-            name: name,
-            email: email,
-            address: address,
-            city: city,
+            name,
+            email,
+            address: address.trim().length === 0? 'Hidden': address,
+            city: city.trim().length === 0? 'Hidden': city,
             postalCode: postalCode.length === 0 ? 1 : postalCode,
-            mobile_no: mobileNo,
-            tel_no: telNo
+            mobile_no: mobileNo.trim().length ===0? 'Hidden': mobileNo,
+            tel_no: telNo.trim().length === 0?'Hidden': telNo
         }
 
 
-        baseUrlWithAuth.post(supplierInsert, data).then(ignored => {
-            insertData(data)
+        baseUrlWithAuth.post(CustomerInsert, data).then(ignored => {
             setName('')
             setEmail('')
             setAddress('')
@@ -99,24 +98,22 @@ const CustomerForm = (
             <DialogTitle id="add-student">Register Customer</DialogTitle>
             <DialogContent>
 
-                {/*<Response showError={error}*/}
-                {/*          errorTitle={errorTitle}*/}
-                {/*          errorMessage={errorMessage}*/}
-                {/*          showSnackBar={show}*/}
-                {/*          successMessage='Supplier Register Success'*/}
-                {/*          closeSnackBar={close}*/}
-                {/*/>*/}
+                <Response showError={error}
+                          errorTitle={errorTitle}
+                          errorMessage={errorMessage}
+                          showSnackBar={show}
+                          successMessage='Supplier Register Success'
+                          closeSnackBar={close}
+                />
 
                 <Grid container spacing={1}>
                     <Grid item md={6} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   id="customer-name"
                                    label="Customer Name"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
-                                   name='supplier-name'
                                    value={name}
                                    onChange={(e) => setName(e.target.value)}
                         />
@@ -138,12 +135,10 @@ const CustomerForm = (
                     <Grid item md={8} xs={12}>
                         <TextField
                             margin="dense"
-                            id="address"
                             label="Home Address"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            name='address'
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                         />
@@ -152,12 +147,10 @@ const CustomerForm = (
                     <Grid item md={2} xs={12}>
                         <TextField
                             margin="dense"
-                            id="city"
                             label="City"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            name='city'
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />

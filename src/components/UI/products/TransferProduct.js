@@ -1,26 +1,155 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle, FormControl,
-    Grid,
-    TextField
-} from "@material-ui/core"
-import {useEffect, useState} from "react";
+import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Checkbox from '@material-ui/core/Checkbox';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+
+import {useEffect, useState, Fragment} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {productTransfer, storeList} from "../../../utils/ServerEndPoint";
-import {Autocomplete} from "@material-ui/lab";
 import Response from "../../../utils/Response/Response";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@material-ui/core";
+
+import StoreFind from "../store_branch/StoreFind";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        margin: 'auto',
+    },
+    cardHeader: {
+        padding: theme.spacing(1, 2),
+    },
+    list: {
+        width: 400,
+        height: 400,
+        backgroundColor: theme.palette.background.paper,
+        overflow: 'auto',
+    },
+    button: {
+        margin: theme.spacing(0.5, 0),
+    },
+}));
+
+function not(a, b) {
+    return a.filter((value) => b.indexOf(value) === -1);
+}
+
+function intersection(a, b) {
+    return a.filter((value) => b.indexOf(value) !== -1);
+}
 
 
 const TransferProduct = (
     {
+        data,
         closeDialog,
         dialog,
         transfer
     }) => {
+    // For Transfer Dialog
+    const classes = useStyles();
+    const [checked, setChecked] = useState([]);
+    const [left, setLeft] = useState([]);
+    const [right, setRight] = useState([]);
+
+    const [tempLeft, setTempLeft] = useState([])
+    const leftChecked = intersection(checked, left);
+    const rightChecked = intersection(checked, right);
+    // for find the branch dialog
+    const [findDialog, setFindDialog] = useState()
+    const [toTransferBranch, setToTransferBranch] = useState()
+
+    const [leftSearch, setLeftSearch] = useState('')
+
+    const filterLeft = (value) => {
+        setLeftSearch(value)
+        if (value.length !== 0) {
+            const newLeft = left.filter(e => e.productName.toLowerCase().startsWith(leftSearch.length === 0 ? '' : leftSearch.toLowerCase()))
+            setTempLeft(newLeft)
+            return
+        }
+
+        setTempLeft(left)
+
+
+    }
+
+
+    const handleToggle = (value) => () => {
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        setChecked(newChecked);
+    };
+
+
+    const handleCheckedRight = () => {
+        setRight(right.concat(leftChecked));
+        setLeft(not(left, leftChecked));
+        setChecked(not(checked, leftChecked));
+    };
+
+    const handleCheckedLeft = () => {
+        setLeft(left.concat(rightChecked));
+        setRight(not(right, rightChecked));
+        setChecked(not(checked, rightChecked));
+    };
+
+
+    const customList = (title, items, change) => (
+        <Card>
+            <p style={{margin: 0, marginLeft: 15, marginTop: 10}}><b>{title}</b></p>
+            <CardHeader
+                className={classes.cardHeader}
+                avatar={
+                    change === null ? null :
+                        <TextField placeholder={'Search Product Name'} onChange={(e) => change(e.target.value)}/>
+                    // <Checkbox
+                    //     onClick={handleToggleAll(items)}
+                    //     checked={numberOfChecked(items) === items.length &&   items.length !== 0}
+                    //     indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
+                    //     disabled={items.length === 0}
+                    //     inputProps={{ 'aria-label': 'all items selected' }}
+                    // />
+                }
+                // subheader={`${numberOfChecked(items)}/${it/**/ems.length} selected`}
+            />
+            <Divider/>
+            <List className={classes.list} dense component="div" role="list">
+                {items.map((value) => {
+                    const labelId = `transfer-list-all-item-${value}-label`;
+
+                    return (
+                        <ListItem key={value.id} role="listitem" button onClick={handleToggle(value)}>
+                            <ListItemIcon>
+                                <Checkbox
+                                    checked={checked.indexOf(value) !== -1}
+                                    tabIndex={-1}
+                                    disableRipple
+                                    inputProps={{'aria-labelledby': labelId}}
+                                />
+                            </ListItemIcon>
+                            <ListItemText id={labelId} primary={`${value.productName} - ${value.code}`}/>
+                        </ListItem>
+                    );
+                })}
+                <ListItem/>
+            </List>
+        </Card>
+    );
 
 
     // for autocomplete
@@ -37,119 +166,83 @@ const TransferProduct = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
-    const close = () => {
-        setShow(false)
-    }
-
 
     const register = (event) => {
-
         event.preventDefault()
-        if(store === null){
-            alert("Please insert store to transfer")
+
+        if(right.length === 0) {
+            alert('Container Is Empty')
             return
         }
-        const data = {
-            code,
-            qty: parseInt(qty),
-            storeID: store.id
-        }
-
-        baseUrlWithAuth.post(productTransfer, data).then(e => {
-            setError(false)
-            setShow(true)
-            transfer()
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
-
-
     }
+
     useEffect(() => {
-        baseUrlWithAuth.get(storeList).then(e => {
-            setStores(e.data)
-        })
-    }, [])
-    return <Dialog
-        open={dialog}
-        onClose={closeDialog}
-        aria-labelledby="add-student"
-        maxWidth={"md"}
-        fullWidth
-    >
-        <form onSubmit={register}>
+        setLeft(data)
+        setTempLeft(data)
+        setFindDialog(dialog)
+    }, [dialog])
+    return <Fragment>
+        {
+            findDialog ===true ? <StoreFind  updateClose={closeDialog}
+                                             closeDialog={() => setFindDialog(false)}
+                                             dialog={findDialog}
+                                             setStore={setToTransferBranch}/>
+                :
+                <Dialog
+                    open={dialog}
+                    onClose={closeDialog}
+                    aria-labelledby="add-student"
+                    maxWidth={"lg"}
+                    fullWidth
+                >
 
+                    <DialogTitle style={{color: 'black', backgroundColor: '#DEDEDE'}}><b>Transfer Product To Branch</b></DialogTitle>
+                    <DialogContent style={{backgroundColor: '#DEDEDE'}}>
+                        <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
+                            <Grid item>{customList('Select Product', tempLeft, filterLeft)}</Grid>
+                            <Grid item>
+                                <Grid container direction="column" alignItems="center">
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        size="small"
+                                        className={classes.button}
+                                        onClick={handleCheckedRight}
+                                        disabled={leftChecked.length === 0}
+                                        aria-label="move selected right"
+                                        color='primary'
+                                    >
+                                        &gt;
+                                    </Button>
+                                    <Button
+                                        disableElevation
+                                        variant="contained"
+                                        size="small"
+                                        className={classes.button}
+                                        onClick={handleCheckedLeft}
+                                        disabled={rightChecked.length === 0}
+                                        aria-label="move selected left"
+                                        color={'primary'}
+                                    >
+                                        &lt;
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <Grid item>{customList(`Product To Be Transferred To Branch ${toTransferBranch === undefined?'': toTransferBranch.location}`, right, null)}</Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions style={{backgroundColor: '#DEDEDE'}}>
 
-            <DialogTitle id="add-student">Transfer Product</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Transfer Product To Another Branch
-                </DialogContentText>
-
-                <Response showError={error}
-                          errorTitle={errorTitle}
-                          errorMessage={errorMessage}
-                          showSnackBar={show}
-                          successMessage='Product Transfer Success'
-                          closeSnackBar={close}
-                />
-
-                <Grid container spacing={1}>
-
-                    <Grid item md={4} xs={12}>
-                        <TextField autoFocus
-                                   margin="dense"
-                                   label="Product Code"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={code}
-                                   onChange={e => setCode(e.target.value)}
-                        />
-                    </Grid>
-
-                    <Grid item md={4} xs={12}>
-                        <TextField
-                            margin="dense"
-                            label="QTY"
-                            type="number"
-                            fullWidth
-                            variant="outlined"
-                            value={qty}
-                            onChange={e => setQty(e.target.value < 0 ? 1 : e.target.value)}
-                        />
-                    </Grid>
-
-                    <Grid item md={4} xs={12}>
-                        <FormControl variant="outlined" margin='dense' fullWidth>
-                            <Autocomplete
-                                size={"small"}
-                                options={stores}
-                                getOptionLabel={(option) => option.name + ' ' + option.state}
-                                getOptionSelected={(option, value) => option.id === value.id}
-                                onChange={(event, value) => setStore(value)}
-                                renderInput={(params) => <TextField {...params} label="Store" variant="outlined"/>}
-                            />
-                        </FormControl>
-                    </Grid>
-
-                </Grid>
-            </DialogContent>
-
-            <DialogActions>
-
-                <Button type={"submit"} color='primary' onClick={register}>
-                    Transfer
-                </Button>
-                <Button onClick={() => closeDialog(false)} color='secondary'>
-                    Cancel
-                </Button>
-            </DialogActions>
-        </form>
-    </Dialog>
+                        <Button type={"submit"} variant={'contained'} color='primary' onClick={register}>
+                            Transfer
+                        </Button>
+                        <Button onClick={closeDialog} variant={'contained'} color='secondary'>
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+        }
+    </Fragment>
 }
 
 

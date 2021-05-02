@@ -14,6 +14,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import style from '../mainUI/MainUiStyle'
 import {Link} from "react-router-dom";
+import {baseUrlWithAuth} from "../mainUI/BaseUrlWithAuth";
+import {logout} from "../../utils/ServerEndPoint";
 
 const StyledMenu = withStyles({
     paper: {
@@ -56,9 +58,11 @@ const Navbar = ({setUser,handleDrawerOpen,name}) => {
 
 
 
-    const logoutClick = () => {
-        localStorage.clear()
+    const logoutClick = async ()=> {
+        await baseUrlWithAuth.post(logout).then(ignored => {})
         window.location.reload(true);
+
+        localStorage.clear()
         setUser()
     }
 

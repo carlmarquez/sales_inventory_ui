@@ -1,4 +1,10 @@
+import {MonthsWord} from "../date/ConvertMonthWord";
+
 export const TransactionTable = [
+    {
+        name: "transactionCode",
+        label: "Transaction Code"
+    },
     {
         name: "cashierAssign",
         label: "Cashier Assigned"
@@ -18,7 +24,7 @@ export const TransactionTable = [
     },
     {
         name: "store",
-        label: "Store Name"
+        label: "Branch Locatoin"
     },
     {
         name: "date",
@@ -28,6 +34,8 @@ export const TransactionTable = [
 
 ];
 
-export function InsertTransaction(id,cashierAssign,amount,discount, customer,store,date) {
-    return {id,cashierAssign,amount,discount, customer,store,date}
+export function InsertTransaction(transactionCode,cashierAssign,amount,discount, customer,store,dateTime) {
+
+
+    return {transactionCode,cashierAssign,amount,discount, customer,store,date:MonthsWord(dateTime)}
 }

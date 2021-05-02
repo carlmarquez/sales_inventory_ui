@@ -1,13 +1,9 @@
-import React from 'react';
-import Link from '@material-ui/core/Link';
+import React, {useEffect, Fragment ,useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
-import {Button} from "@material-ui/core";
+import {months} from "../../../../utils/date/ConvertMonthWord";
 
-function preventDefault(event) {
-    event.preventDefault();
-}
 
 const useStyles = makeStyles({
     depositContext: {
@@ -15,24 +11,25 @@ const useStyles = makeStyles({
     },
 });
 
-export default function TodaySales() {
+export default function TodaySales({total}) {
+    const [dateToday, setDateToday] = useState('')
     const classes = useStyles();
+
+    useEffect(() => {
+        const date = new Date()
+        setDateToday(`${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`)
+
+    }, [])
     return (
-        <React.Fragment>
+        <Fragment>
             <Title>Today Sales</Title>
             <Typography component="p" variant="h4">
-                ₱3,024.00
+                ₱ {total}
             </Typography>
             <Typography color="textSecondary" className={classes.depositContext}>
-                on 15 March, 2019
+                on {dateToday}
             </Typography>
-            <div>
-                <Link color="primary"  to={"/"} onClick={preventDefault}>
-                    <Button color={'primary'} variant={"contained"}>
-                        Reload
-                    </Button>
-                </Link>
-            </div>
-        </React.Fragment>
+
+        </Fragment>
     );
 }

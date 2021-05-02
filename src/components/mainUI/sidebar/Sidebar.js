@@ -15,7 +15,8 @@ import ComputerIcon from '@material-ui/icons/Computer';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
 import SettingsIcon from '@material-ui/icons/Settings';
-
+import ErrorIcon from '@material-ui/icons/Error';
+import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 const useStyles = makeStyles({
     list: {
         width: 240,
@@ -104,6 +105,18 @@ export default function Sidebar({setPosOn, open, handleDrawerClose, handleDrawer
                                 <ListIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Audit Trail"/>
+                        </ListItem>
+                        <ListItem component={NavLink} to="/transferProducts" button>
+                            <ListItemIcon>
+                                <TransferWithinAStationIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Transfer Product"/>
+                        </ListItem>
+                        <ListItem component={NavLink} to="/critical" button>
+                            <ListItemIcon>
+                                <ErrorIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Critical Stock"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/settings" button>
                             <ListItemIcon>
