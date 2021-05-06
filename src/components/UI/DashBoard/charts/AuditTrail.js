@@ -1,13 +1,10 @@
 import {Fragment, useEffect, useState} from 'react';
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
-import Button from "@material-ui/core/Button";
 import {baseUrlWithAuth} from "../../../mainUI/BaseUrlWithAuth";
 import {dashBoardTodayAudit} from "../../../../utils/ServerEndPoint";
 import {MonthsWord} from "../../../../utils/date/ConvertMonthWord";
@@ -21,15 +18,6 @@ function createData(date, location, user, action, value) {
 
 
 
-function preventDefault(event) {
-    event.preventDefault();
-}
-
-const useStyles = makeStyles((theme) => ({
-    seeMore: {
-        marginTop: theme.spacing(3),
-    },
-}));
 
 export default function RecentAuditTrail() {
 
@@ -38,10 +26,7 @@ export default function RecentAuditTrail() {
     useEffect(() => {
         const getData = async () => {
             await baseUrlWithAuth.get(dashBoardTodayAudit).then(recentAudit => {
-                recentAudit.data.map(recent => {
-                    console.log(recent)
-                    temp.push(createData(recent.createdAt,recent.Store.location, recent.User.email, recent.action,recent.value))
-                })
+                recentAudit.data.map(recent => temp.push(createData(recent.createdAt,recent.Store.location, recent.User.email, recent.action,recent.value)))
             }).catch(error => {
                 console.log(error)
             })
@@ -49,9 +34,9 @@ export default function RecentAuditTrail() {
             setRows(temp)
         }
         getData().then(ignored => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
-    const classes = useStyles();
     return (
         <Fragment>
             <Title>Recent AuditTrail</Title>

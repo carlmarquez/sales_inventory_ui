@@ -18,12 +18,12 @@ export const StoreTable = [
     },
     {
         name: "mobile_no",
-        label: "Mobile No"
+        label: "Mobile Number"
     },
     {
         name: "telno",
-        label: "TelNo"
-    },
+        label: "Telephone Number"
+    }
 ];
 
 export function InsertStore(code, location,email, postalCode,mobile_no,telno) {

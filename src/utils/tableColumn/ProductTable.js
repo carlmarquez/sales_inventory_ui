@@ -1,7 +1,7 @@
 export const ProductTable = [
     {
       name:"code",
-      label: "Item Code"
+      label: "Product Code"
     },
     {
         name: "brand",
@@ -26,7 +26,7 @@ export const ProductTable = [
     },
     {
         name: "store",
-        label: "Branch"
+        label: "Branch Name"
     },
     {
         name: "status",
@@ -34,6 +34,6 @@ export const ProductTable = [
     }
 ];
 
-export function InsertProduct(code,brand,productName,type, amount, supplier, store,status) {
-    return {code,brand,productName,type, amount, supplier, store,status}
+export function InsertProduct(code,brand,productName,type, amount, supplier, store,status,id) {
+    return {code,brand,productName,type, amount, supplier, store,status,id}
 }

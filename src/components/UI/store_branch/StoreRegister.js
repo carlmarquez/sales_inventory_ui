@@ -11,7 +11,11 @@ import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {storeInsert} from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
-import UniqueWord from "../../../utils/uniqueWord/UniqueWord";
+import {adjectives, animals, colors, uniqueNamesGenerator} from "unique-names-generator";
+import CheckEmail from "../../../utils/FormError/CheckEmail";
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CheckCellPhoneNumber from "../../../utils/FormError/CheckCellphoneNumber";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 
 
 const StoreRegister = (
@@ -35,6 +39,17 @@ const StoreRegister = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form validation
+    const [emailError, setEmailError] = useState(false)
+    const [cellPhoneNumberError, setCellPhoneNumberError] = useState(false)
+    const [telephoneNumberError, setTelephoneNumberError] = useState(false)
+
+    // form validation message
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [cellPhoneNumberErrorMessage, setCellPhoneNumberErrorMessage] = useState('')
+    const [telephoneNumberErrorMessage, setTelephoneNumberErrorMessage] = useState('')
+
+
     const close = () => {
         setShow(false)
     }
@@ -42,6 +57,13 @@ const StoreRegister = (
 
     const register = (event) => {
 
+        let error = false
+        const code = uniqueNamesGenerator({
+            dictionaries: [adjectives, colors, animals],
+            separator: '-',
+            length: 3,
+            style: 'lowerCase'
+        })
 
         event.preventDefault()
 
@@ -50,30 +72,53 @@ const StoreRegister = (
             return
         }
 
-        const data = {
-            location,
-            code: UniqueWord,
-            email: email,
-            postalCode: postalCode.length ===0? 1: postalCode,
-            mobile_no: mobileNo.trim().length===0? '': mobileNo,
-            tel_no: telNo.trim().length === 0? '': telNo
-        }
-        baseUrlWithAuth.post(storeInsert, data).then(ignored => {
-            Reload()
-            setLocation('')
-            setEmail('')
-            setPostalCode('')
-            setTelNo('')
-            setMobileNo('')
-            setShow(true)
-            setError(false)
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
 
+        if (email.length >0 &&!CheckEmail(email,setEmailError,setEmailErrorMessage, 'PLease Input A Valid Email')) {
+            error = true
+        }else{
+            RemoveError(setEmailError,setEmailErrorMessage)
+        }
+
+        if (mobileNo.length >0&&!CheckCellPhoneNumber(mobileNo,setCellPhoneNumberError,setCellPhoneNumberErrorMessage ,'Please Input A Valid Cellphone Number')) {
+            error = true
+        }else{
+            RemoveError(setCellPhoneNumberError,setCellPhoneNumberErrorMessage)
+        }
+
+
+        if (telNo.length > 0 && !CheckTelephoneNumber(telNo, setTelephoneNumberError, setTelephoneNumberErrorMessage, 'Please Input A Valid Landline')) {
+            error = true
+        } else {
+            RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
+        }
+
+        alert(error)
+        if (!error) {
+            const data = {
+                location,
+                code,
+                email: email,
+                postalCode: postalCode.length === 0 ? 1 : postalCode,
+                mobile_no: mobileNo.trim().length === 0 ? '' : mobileNo,
+                tel_no: telNo.trim().length === 0 ? '' : telNo
+            }
+            baseUrlWithAuth.post(storeInsert, data).then(ignored => {
+                Reload()
+                setLocation('')
+                setEmail('')
+                setPostalCode('')
+                setTelNo('')
+                setMobileNo('')
+                setShow(true)
+                setError(false)
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+                setError(true)
+            })
+
+        }
 
     }
 
@@ -115,56 +160,58 @@ const StoreRegister = (
 
                     <Grid item md={4} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="store-email"
-                                   label="Store Email"
-                                   type="email"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='store-email'
-                                   value={email}
-                                   onChange={(e) => setEmail(e.target.value)}
+                            error={emailError}
+                            helperText={emailErrorMessage}
+                            margin="dense"
+                            id="store-email"
+                            label="Email"
+                            type="email"
+                            fullWidth
+                            variant="outlined"
+                            name='store-email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={4} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Postal Code"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='postal'
-                                   value={postalCode}
-                                   onChange={e => setPostalCode(e.target.value)}
+                            margin="dense"
+                            label="Postal Code"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            name='postal'
+                            value={postalCode}
+                            onChange={e => setPostalCode(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="mobile-no"
-                                   label="Mobile No."
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='mobile-no'
-                                   value={mobileNo}
-                                   onChange={e => setMobileNo(e.target.value)}
+                            error={cellPhoneNumberError}
+                            helperText={cellPhoneNumberErrorMessage}
+                            margin="dense"
+                            label="Mobile Number"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={mobileNo}
+                            onChange={e => setMobileNo(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="telNo"
-                                   label="Telephone No."
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='telNo'
-                                   value={telNo}
-                                   onChange={e => setTelNo(e.target.value)}
+                            error={telephoneNumberError}
+                            helperText={telephoneNumberErrorMessage}
+                            margin="dense"
+                            label="Telephone Number"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={telNo}
+                            onChange={e => setTelNo(e.target.value)}
                         />
                     </Grid>
 

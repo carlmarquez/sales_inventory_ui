@@ -14,7 +14,7 @@ import UpdateIcon from '@material-ui/icons/Update';
 import StoreDelete from "./StoreDelete";
 import StoreUpdate from "./StoreUpdate";
 
-const StoreBranch = () => {
+const StoreBranch = ({user}) => {
     const classes = style()
 
     const [dialog, setDialog] = useState(false);
@@ -44,39 +44,46 @@ const StoreBranch = () => {
 
     return (
         <Fragment>
-            <StoreRegister dialog={dialog} closeDialog={() => setDialog(false)} Reload={Reload}/>
-            <StoreDelete dialog={storeDeleteDialog} closeDialog={() => setDeleteStoreDialog(false)} Reload={Reload}/>
-            <StoreUpdate dialog={storeUpdateDialog} closeDialog={() => setStoreUpdateDialog(false)} Reload={Reload}/>
+            {
+                user.role === 3?
+                    <Fragment>
+                        <StoreRegister dialog={dialog} closeDialog={() => setDialog(false)} Reload={Reload}/>
+                        <StoreDelete dialog={storeDeleteDialog} closeDialog={() => setDeleteStoreDialog(false)} Reload={Reload}/>
+                        <StoreUpdate dialog={storeUpdateDialog} closeDialog={() => setStoreUpdateDialog(false)} Reload={Reload}/>
+                    </Fragment>: null
+            }
             <Grid component="main" className={classes.root}>
-                <Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
-                    <Toolbar>
-                        <Box className={classes.tableNavbarBox}>
+                {
+                    user.role === 3?<Grid item component={Paper} md={12} sm={12} xs={12} className={classes.tableNavbar}>
+                        <Toolbar>
+                            <Box className={classes.tableNavbarBox}>
 
-                            <Tooltip title="Add Store" aria-label="add">
-                                <IconButton onClick={() => setDialog(true)} aria-label="AddStore"
-                                            color={"primary"}>
-                                    <StoreIcon fontSize={"large"}/>
-                                </IconButton>
-                            </Tooltip>
+                                <Tooltip title="Add Store" aria-label="add">
+                                    <IconButton onClick={() => setDialog(true)} aria-label="AddStore"
+                                                color={"primary"}>
+                                        <StoreIcon fontSize={"large"}/>
+                                    </IconButton>
+                                </Tooltip>
 
-                            <Tooltip title="Delete Store" aria-label="add">
-                                <IconButton onClick={() => setDeleteStoreDialog(true)} aria-label="DeleteStore"
-                                            color={"secondary"}>
-                                    <RemoveShoppingCartIcon fontSize={"large"}/>
-                                </IconButton>
-                            </Tooltip>
+                                <Tooltip title="Delete Store" aria-label="add">
+                                    <IconButton onClick={() => setDeleteStoreDialog(true)} aria-label="DeleteStore"
+                                                color={"secondary"}>
+                                        <RemoveShoppingCartIcon fontSize={"large"}/>
+                                    </IconButton>
+                                </Tooltip>
 
-                            <Tooltip title="Update Store" aria-label="add">
-                                <IconButton onClick={() => setStoreUpdateDialog(true)} aria-label="UpdateStore"
-                                            color={"primary"}>
-                                    <UpdateIcon fontSize={"large"}/>
-                                </IconButton>
-                            </Tooltip>
+                                <Tooltip title="Update Store" aria-label="add">
+                                    <IconButton onClick={() => setStoreUpdateDialog(true)} aria-label="UpdateStore"
+                                                color={"primary"}>
+                                        <UpdateIcon fontSize={"large"}/>
+                                    </IconButton>
+                                </Tooltip>
 
-                        </Box>
+                            </Box>
 
-                    </Toolbar>
-                </Grid>
+                        </Toolbar>
+                    </Grid>: null
+                }
                 <Grid item md={12} component={Paper} className={classes.tableContainerWrapper}>
                     <MUIDataTable
                         title={

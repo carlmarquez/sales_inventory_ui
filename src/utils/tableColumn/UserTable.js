@@ -19,7 +19,7 @@ export const UserTable = [
     },
     {
         name: "store",
-        label: "Store Name"
+        label: "Branch Name"
     },
     {
         name: 'status',

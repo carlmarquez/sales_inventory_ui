@@ -46,6 +46,7 @@ const ProductRegister = (
     useEffect(() => {
         const id = type.length > 0 ? type[0].id : 1
         setProductTypeId(id)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // for snack bar
@@ -323,7 +324,7 @@ const ProductRegister = (
                     <Grid item md={role === 3? 4: 6} xs={12}>
                         <TextField
                             margin="dense"
-                            label="QTY"
+                            label="Quantity"
                             type="number"
                             fullWidth
                             variant="outlined"

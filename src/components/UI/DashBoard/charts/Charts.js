@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -7,7 +7,6 @@ import Chart from './ChartSales';
 import TodaySales from './TodaySales';
 import RecentTransaction from "./RecentTransaction";
 import RecentAuditTrail from "./AuditTrail";
-import {months, MonthsWord} from "../../../../utils/date/ConvertMonthWord";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,14 +50,14 @@ export default function Charts() {
                         </Paper>
                     </Grid>
                     {/* Today Sales */}
-                    <Grid item xs={12} md={4} lg={3}>
+                    <Grid item xs={12} md={4} lg={3} alignItems={"flex-end"} style={{textAlign:'right'}}>
                         <Paper className={fixedHeightPaper} >
                             <TodaySales total={total}/>
                         </Paper>
                     </Grid>
                     {/* Recent Transaction */}
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                    <Grid item xs={12} >
+                        <Paper className={classes.paper} >
                             <RecentTransaction setTotal={setTotal}/>
                         </Paper>
                     </Grid>

@@ -26,11 +26,11 @@ export const CustomerTable = [
     },
     {
         name: "mobile_no",
-        label: "Mobile No"
+        label: "Mobile Number"
     },
     {
         name: "telno",
-        label: "TelNo"
+        label: "Telephone Number"
     }
 ];
 

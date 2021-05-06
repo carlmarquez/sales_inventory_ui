@@ -11,11 +11,13 @@ import IconButton from "@material-ui/core/IconButton";
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import Receipt from "../../POS/checkout/Receipt";
 import FindTransaction from "./FindTransaction";
+import ReturnItemDialog from "./ReturnItemDialog";
 
 export const Transaction = () => {
     const classes = style()
     const [dialog, setDialog] = useState(false)
     const [receiptDialog, setReceiptDialog] = useState(false)
+    const [returnItemDialog,setReturnItemDialog] = useState(false)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [items, setItems] = useState([])
@@ -49,10 +51,13 @@ export const Transaction = () => {
         setReceiptDialog(true)
     }
 
+
+
     return (
         <Fragment>
             <FindTransaction dialog={dialog} closeDialog={setDialog}
                              updateTransaction={updateTransaction}/>
+            <ReturnItemDialog dialog={returnItemDialog}  closeDialog={setReturnItemDialog}/>
             {
                 receiptDialog === true ?
                     <Receipt
@@ -77,7 +82,7 @@ export const Transaction = () => {
                             </Tooltip>
 
                             <Tooltip title="Return Item" aria-label="add">
-                                <IconButton onClick={() => setDialog(true)} aria-label="addProduct"
+                                <IconButton onClick={() => setReturnItemDialog(true)} aria-label="addProduct"
                                             color={"primary"}>
                                     <CompareArrowsIcon fontSize={"large"}/>
                                 </IconButton>

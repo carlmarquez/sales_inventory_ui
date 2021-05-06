@@ -22,6 +22,7 @@ export const
     productTransfer = 'product/transfer',
     productFind = 'product/find',
     productDeleteImage = 'product/deleteImage',
+    productFindById = 'product/findById',
 
     // stores
     storeList = 'store/list',
@@ -34,6 +35,7 @@ export const
     transactionList = 'transaction/list',
     transactionInsert = 'transaction/insert',
     transactionFind = 'transaction/find',
+    transactionReturnItem = 'transaction/returnItem',
 
     // Sales
     salesList = 'sales/list',
@@ -69,7 +71,19 @@ export const
     SetCriticalStock = 'setting/setCriticalStock',
     GetCriticalStock = 'setting/getCriticalStock',
     ListProductType = 'setting/productTypeList',
-    getCriticalStockProduct = 'setting/getCriticalStockProduct'
+    getCriticalStockProduct = 'setting/getCriticalStockProduct',
+
+    // transfer
+    CreateTransfer = 'transfer/product',
+    ReceiveTransfer = 'transfer/receive',
+    OnTheWayTransfer = 'transfer/onTheWay',
+    TransferDelete = 'transfer/delete',
+    ReceiveList = 'transfer/receiveList',
+
+    // password reset
+    resetPasswordFindBranch='resetPassword/storeFind',
+    resetPasswordFindUser='resetPassword/userFind',
+    resetPasswordUpdateUserPassword='resetPassword/updatePassword'
 
 
 

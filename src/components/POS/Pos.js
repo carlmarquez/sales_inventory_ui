@@ -5,7 +5,7 @@ import ProductList from "./ProductList/ProductList";
 import {style} from "./PosStyle";
 import {useEffect, useState, Fragment, lazy} from "react";
 import {baseUrlWithAuth} from "../mainUI/BaseUrlWithAuth";
-import {productList} from "../../utils/ServerEndPoint";
+import {productFindById, productList} from "../../utils/ServerEndPoint";
 
 const CustomerExistDialog = lazy(() => import(`./checkout/CustomerExistDialog`))
 const CustomerForm = lazy(() => import(`./checkout/CustomerForm`))
@@ -30,27 +30,28 @@ const Pos = ({setPosOn, user}) => {
 
 
     useEffect(() => {
+
+        getData().then(ignored => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+
+    const getData = async () => {
         const temp = []
-        const getData = async () => {
-
-            await baseUrlWithAuth.get(productList, {
-                params: {
-                    branch: user.StoreId,
-                    status:'available'
-                }
-            }).then(async (products) => {
-                products.data.map(product =>
-                    temp.push(product)
-                )
-                setProducts(temp)
-            })
-
-        }
-
-        getData().then(ignored => {
+        await baseUrlWithAuth.get(productList, {
+            params: {
+                branch: user.StoreId,
+                status: 'available'
+            }
+        }).then(async (products) => {
+            products.data.map(product =>
+                temp.push(product)
+            )
+            setProducts(temp)
         })
 
-    }, [])
+    }
+
 
     const insert = (item, qty) => {
         const product = item[0]
@@ -62,6 +63,55 @@ const Pos = ({setPosOn, user}) => {
             code,
             id: product.id
         }
+    }
+
+    const remove = async () => {
+        if (itemBuy.length === 0) {
+            alert("The Item Is Empty")
+            return
+        }
+        let code = prompt('Enter Product Code');
+
+        let index = 0
+
+        const find = itemBuy.find((e, i) => {
+            index = i;
+            return e.code === code
+        })
+
+
+        // if the item code is invalid
+        if (find === undefined) {
+            alert("Product Code Invalid")
+            return
+        }
+
+        // deleting item in left side bar
+        let checkoutItem = [...itemBuy]
+        if(find.qty === 1){
+            checkoutItem.splice(index, 1)
+            setItemBuy(checkoutItem)
+        }else{
+           checkoutItem[index].qty = checkoutItem[index].qty - 1
+        }
+
+        const currentTotalPrice = totalPrice - find.price;
+        setTotalPrice(currentTotalPrice)
+        const currentProduct = [...products]
+        await baseUrlWithAuth.get(productFindById, {id: find.id}).then(e => {
+            currentProduct.push(e.data)
+        }).catch(error => {
+            console.log(error)
+        })
+        setProducts(currentProduct)
+
+    }
+
+    const cancelTransaction =  () => {
+        getData().then(ignored => {})
+        setItemBuy([])
+        setTotalPrice(0)
+        alert("Transaction Cancel Successful")
     }
 
 
@@ -107,7 +157,7 @@ const Pos = ({setPosOn, user}) => {
     }
 
     const checkOut = () => {
-        if(itemBuy.length ===0){
+        if (itemBuy.length === 0) {
             alert("Please Buy First To Checkout")
             return
         }
@@ -132,7 +182,6 @@ const Pos = ({setPosOn, user}) => {
         setPrintReceipt(true)
     }
 
-    console.log(customer)
     return (
         <Fragment>
             <CustomerExistDialog
@@ -146,6 +195,9 @@ const Pos = ({setPosOn, user}) => {
 
             {
                 printReceipt ? <Receipt
+                    getData={getData}
+                    setCheckOutDialog={setCheckOutDialog}
+                    setPrice={setTotalPrice}
                     item={itemBuy}
                     setItem={setItemBuy}
                     customer={customer}
@@ -155,7 +207,8 @@ const Pos = ({setPosOn, user}) => {
                     cancel={() => setPrintReceipt(false)}
                     posOn={true}/> : null
             }
-            <FindCustomer setCustomer={setCustomer} print={print} dialog={findCustomerDialog} closeDialog={() => setFindCustomerDialog(false)}/>
+            <FindCustomer setCustomer={setCustomer} print={print} dialog={findCustomerDialog}
+                          closeDialog={() => setFindCustomerDialog(false)}/>
 
             <CustomerForm dialog={customerFormDialog} closeDialog={() => setCustomerFormDialog(false)}/>
 
@@ -179,11 +232,14 @@ const Pos = ({setPosOn, user}) => {
                     />
                 </Grid>
                 <Grid container item md={9} className={classes.right}>
-                    <ProductList logout={logout}
-                                 checkOut={checkOut}
-                                 switchUser={switchUser}
-                                 user={user}
-                                 data={products}/>
+                    <ProductList
+                        cancelTransaction={cancelTransaction}
+                        logout={logout}
+                        checkOut={checkOut}
+                        switchUser={switchUser}
+                        user={user}
+                        remove={remove}
+                        data={products}/>
                 </Grid>
             </Grid>
         </Fragment>

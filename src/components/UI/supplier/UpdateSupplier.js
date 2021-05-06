@@ -14,6 +14,10 @@ import {
 } from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 import FindSupplier from "./FindSupplier";
+import CheckEmail from "../../../utils/FormError/CheckEmail";
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CheckCellPhoneNumber from "../../../utils/FormError/CheckCellphoneNumber";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 
 
 const UpdateSupplier = (
@@ -25,7 +29,7 @@ const UpdateSupplier = (
 
 
     // data
-    const [id,setId] = useState()
+    const [id, setId] = useState()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [address, setAddress] = useState('')
@@ -44,42 +48,71 @@ const UpdateSupplier = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form validation
+    const [emailError, setEmailError] = useState(false)
+    const [cellPhoneNumberError, setCellPhoneNumberError] = useState(false)
+    const [telephoneNumberError, setTelephoneNumberError] = useState(false)
+
+    // form validation message
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [cellPhoneNumberErrorMessage, setCellPhoneNumberErrorMessage] = useState('')
+    const [telephoneNumberErrorMessage, setTelephoneNumberErrorMessage] = useState('')
+
 
     const register = async (event) => {
+        let error = false
         event.preventDefault()
         if (name.trim().length === 0) {
             alert("Please enter store name")
             return
         }
 
-        if(email.trim().length === 0){
-            alert("Please enter a email")
-            return
+        if (email.length > 0 && !CheckEmail(email, setEmailError, setEmailErrorMessage, 'PLease Input A Valid Email')) {
+            error = true
+        } else {
+            RemoveError(setEmailError, setEmailErrorMessage)
         }
-        const data = {
-            id,
-            name: name,
-            email: email,
-            address: address,
-            city: city,
-            state: state,
-            postalCode: postalCode.length ===0? 1: postalCode,
-            mobile_no: mobileNo,
-            tel_no: telNo
+
+        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo, setCellPhoneNumberError, setCellPhoneNumberErrorMessage, 'Please Input A Valid Cellphone Number')) {
+            error = true
+        } else {
+            RemoveError(setCellPhoneNumberError, setCellPhoneNumberErrorMessage)
         }
 
 
-        await baseUrlWithAuth.post(supplierUpdate, data).then(ignored => {
-            setError(false)
-            Reload()
-            alert("Update Success")
-            setFindSupplierDialog(true)
+        if (telNo.length > 0 && !CheckTelephoneNumber(telNo, setTelephoneNumberError, setTelephoneNumberErrorMessage, 'Please Input A Valid Landline')) {
+            error = true
+        } else {
+            RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
+        }
 
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-        })
+
+        if (!error) {
+            const data = {
+                id,
+                name: name,
+                email: email,
+                address: address,
+                city: city,
+                state: state,
+                postalCode: postalCode.length === 0 ? 1 : postalCode,
+                mobile_no: mobileNo,
+                tel_no: telNo
+            }
+
+
+            await baseUrlWithAuth.post(supplierUpdate, data).then(ignored => {
+                setError(false)
+                Reload()
+                alert("Update Success")
+                setFindSupplierDialog(true)
+
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+            })
+        }
 
 
     }
@@ -132,12 +165,10 @@ const UpdateSupplier = (
                                 <Grid item md={6} xs={12}>
                                     <TextField autoFocus
                                                margin="dense"
-                                               id="supplier-name"
                                                label="Supplier Name"
                                                type="text"
                                                fullWidth
                                                variant="outlined"
-                                               name='supplier-name'
                                                value={name}
                                                onChange={(e) => setName(e.target.value)}
                                     />
@@ -146,13 +177,13 @@ const UpdateSupplier = (
 
                                 <Grid item md={6} xs={12}>
                                     <TextField
+                                        error={emailError}
+                                        helperText={emailErrorMessage}
                                         margin="dense"
-                                        id="supplier-email"
                                         label="Supplier Email"
                                         type="email"
                                         fullWidth
                                         variant="outlined"
-                                        name='supplier-email'
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
@@ -161,12 +192,10 @@ const UpdateSupplier = (
                                 <Grid item md={8} xs={12}>
                                     <TextField
                                         margin="dense"
-                                        id="address"
-                                        label="Home Address"
+                                        label="Company Address"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
-                                        name='address'
                                         value={address}
                                         onChange={(e) => setAddress(e.target.value)}
                                     />
@@ -175,12 +204,10 @@ const UpdateSupplier = (
                                 <Grid item md={2} xs={12}>
                                     <TextField
                                         margin="dense"
-                                        id="city"
                                         label="City"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
-                                        name='city'
                                         value={city}
                                         onChange={(e) => setCity(e.target.value)}
                                     />
@@ -190,12 +217,10 @@ const UpdateSupplier = (
                                 <Grid item md={2} xs={12}>
                                     <TextField
                                         margin="dense"
-                                        id="postal"
-                                        label="postal code"
-                                        type="text"
+                                        label="Postal Code"
+                                        type="number"
                                         fullWidth
                                         variant="outlined"
-                                        name='postal'
                                         value={postalCode}
                                         onChange={e => setPostalCode(e.target.value)}
                                     />
@@ -203,13 +228,13 @@ const UpdateSupplier = (
 
                                 <Grid item md={6} xs={12}>
                                     <TextField
+                                        error={cellPhoneNumberError}
+                                        helperText={cellPhoneNumberErrorMessage}
                                         margin="dense"
-                                        id="mobile-no"
-                                        label="Mobile No."
+                                        label="Mobile Number"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
-                                        name='mobile-no'
                                         value={mobileNo}
                                         onChange={e => setMobileNo(e.target.value)}
                                     />
@@ -217,13 +242,13 @@ const UpdateSupplier = (
 
                                 <Grid item md={6} xs={12}>
                                     <TextField
+                                        error={telephoneNumberError}
+                                        helperText={telephoneNumberErrorMessage}
                                         margin="dense"
-                                        id="telNo"
-                                        label="Telephone No."
+                                        label="Telephone Number"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
-                                        name='telNo'
                                         value={telNo}
                                         onChange={e => setTelNo(e.target.value)}
                                     />

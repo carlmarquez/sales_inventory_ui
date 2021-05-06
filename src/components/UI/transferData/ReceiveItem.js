@@ -10,36 +10,37 @@ import {
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
-    CustomerFind
+    ReceiveTransfer,
 } from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 
 
-const FindCustomer = (
+const ReceiveItem = (
     {
         closeDialog,
         dialog,
-        print,
-        setCustomer
+        getData
     }) => {
 
-    const [email, setEmail] = useState('')
+
+    const [code, setCode] = useState('')
 
 
     // for snack bar
     const [error, setError] = useState(false)
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
-    const [show,setShow] = useState(false)
+    const [show, setShow] = useState(false)
 
 
     const register = async (event) => {
         event.preventDefault()
-
-        await baseUrlWithAuth.post(CustomerFind, {email}).then(e => {
-            console.log(e.data)
-            setCustomer(e.data)
-            print()
+        const data = {code}
+        await baseUrlWithAuth.post(ReceiveTransfer, data).then(ignored => {
+            getData()
+            setError(false)
+            setShow(true)
+            setCode('')
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)
@@ -47,31 +48,26 @@ const FindCustomer = (
             setError(true)
         })
 
-    }
 
-    const cancel = () => {
-        // updateClose(false)
-        closeDialog(false)
     }
 
     return <Dialog
         open={dialog}
-        onClose={cancel}
+        onClose={closeDialog}
         aria-labelledby="add-student"
         maxWidth={"md"}
         fullWidth
     >
         <form onSubmit={register}>
 
-            <DialogTitle id="add-student">Find Customer</DialogTitle>
+            <DialogTitle id="add-student">Find Transfer Code</DialogTitle>
             <DialogContent>
-
 
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
                           showSnackBar={show}
-                          successMessage={"Product Find Success"}
+                          successMessage={"Transfer Success"}
                           closeSnackBar={() => setShow(false)}
                 />
 
@@ -83,12 +79,12 @@ const FindCustomer = (
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="Enter Customer Email"
+                            label="Transaction Code"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
                         />
                     </Grid>
                 </Grid>
@@ -97,9 +93,9 @@ const FindCustomer = (
             <DialogActions>
 
                 <Button type={"submit"} color='primary' onClick={register}>
-                    Next
+                    Receive
                 </Button>
-                <Button onClick={cancel} color='secondary'>
+                <Button onClick={closeDialog} color='secondary'>
                     Cancel
                 </Button>
             </DialogActions>
@@ -108,4 +104,4 @@ const FindCustomer = (
 }
 
 
-export default FindCustomer
+export default ReceiveItem

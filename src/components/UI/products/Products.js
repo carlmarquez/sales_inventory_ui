@@ -63,7 +63,7 @@ export const Products = ({user}) => {
         })
         data().then(ignored => {
         })
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [branch])
 
     useEffect(() => {
@@ -73,6 +73,7 @@ export const Products = ({user}) => {
         }).catch(ignored => {
             setLoading(false)
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productStatus])
 
 
@@ -119,9 +120,7 @@ export const Products = ({user}) => {
                 status: productStatus
             }
         }).then((products) => {
-            products.data.map(product =>
-                temp.push(insert(product.code, product.brand, product.name, product.ProductType.name, product.price, product.Supplier.name, product.Store.location, product.status))
-            )
+            products.data.map(product => temp.push(insert(product.code, product.brand, product.name, product.ProductType.name, product.price, product.Supplier.name, product.Store.location, product.status,product.id)))
         }).catch(e => {
             console.log(e)
         })
@@ -144,7 +143,7 @@ export const Products = ({user}) => {
 
 
     const Reload = async () => {
-        await changeBranch(branch)
+        await changeBranch().then(ignored =>{})
     }
 
 
@@ -186,6 +185,8 @@ export const Products = ({user}) => {
             />
 
             <TransferProduct
+                userId={user.id}
+                branch={branch}
                 data={data}
                 transfer={Reload}
                 dialog={transferDialog}

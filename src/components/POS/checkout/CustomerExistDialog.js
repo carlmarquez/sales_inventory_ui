@@ -1,17 +1,12 @@
 import {
     Button,
     Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
-    TextField
 } from "@material-ui/core";
-import Response from "../../../utils/Response/Response";
-import Divider from "@material-ui/core/Divider";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {CustomerFind, dashBoardData} from "../../../utils/ServerEndPoint";
+import {CustomerFind} from "../../../utils/ServerEndPoint";
 
 const CustomerExistDialog = ({
                                  dialog,

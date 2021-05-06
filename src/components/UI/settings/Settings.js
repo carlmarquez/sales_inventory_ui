@@ -20,7 +20,7 @@ import {
     InsertProductType,
     ListProductType,
     productImages,
-    productDeleteImage, DeleteProductType, SetCriticalStock,GetCriticalStock
+    productDeleteImage, DeleteProductType, SetCriticalStock, GetCriticalStock, OnTheWayTransfer, TransferDelete
 } from "../../../utils/ServerEndPoint";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 
@@ -57,16 +57,31 @@ const Setting = () => {
     const [productTypes, setProductTypes] = useState([])
     const [productPhoto, setProductPhoto] = useState([])
     const [criticalStock, setCriticalStock] = useState(0)
+    const [otwProduct, setOtwProduct] = useState([])
 
     useEffect(() => {
-        getProductType().then(ignored => {})
-        getPhoto().then(ignored => {})
-        getCriticalStock().then(ignored => {})
-
+        getProductType().then(ignored => {
+        })
+        getPhoto().then(ignored => {
+        })
+        getCriticalStock().then(ignored => {
+        })
+        getOtwTransfer().then(ignored => {
+        })
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+
+    const getOtwTransfer = async () => {
+        const temp = []
+        await baseUrlWithAuth.get(OnTheWayTransfer).then(e => {
+            e.data.map(i => temp.push(i))
+        }).catch(ignored => {
+        })
+
+        setOtwProduct(temp)
+    }
 
     const cancel = () => {
         alert('Exiting Edit Mode')
@@ -114,8 +129,7 @@ const Setting = () => {
         const data = {name: value}
         baseUrlWithAuth.post(DeleteProductType, data)
             .then(e => {
-                getProductType().then(ignored => {
-                })
+                getProductType().then(ignored => {})
                 alert(e.data.message)
             })
             .catch(e => {
@@ -129,8 +143,7 @@ const Setting = () => {
         await baseUrlWithAuth.post(productDeleteImage, data)
             .then((e) => {
                 alert(e.data.message)
-                getPhoto().then(ignored => {
-                })
+                getPhoto().then(ignored => {})
             })
             .catch((error) => {
                 alert(error.response.data.message)
@@ -161,6 +174,16 @@ const Setting = () => {
     const getCriticalStock = async () => {
         await baseUrlWithAuth.get(GetCriticalStock).then(e => {
             setCriticalStock(e.data.stock.critical_stock)
+        })
+    }
+
+    const transferDeleteClick = async () => {
+        const value = window.prompt('Enter Product Type')
+        const data = {code: value}
+
+        await baseUrlWithAuth.post(TransferDelete,data).then(e => {
+            alert(e.data.message)
+            getOtwTransfer().then(ignored => {})
         })
     }
 
@@ -228,6 +251,7 @@ const Setting = () => {
                                 }
                             </div>
                         </Grid>
+
                         <Grid item md={6} xs={12}>
                             <h3 style={{marginBottom: 0}}>Product Photo:</h3>
 
@@ -247,6 +271,39 @@ const Setting = () => {
                                     edit ?
                                         <Fragment>
                                             <Tooltip onClick={deletePhotoClick} title="Delete Photo"
+                                                     aria-label="addProduct">
+                                                <IconButton aria-label="addProduct"
+                                                            color={"secondary"}>
+                                                    <DeleteIcon aria-label="addProduct"
+                                                                fontSize={"large"}
+                                                                color={"secondary"}/>
+                                                </IconButton>
+                                            </Tooltip>
+
+
+                                        </Fragment> : null
+                                }
+                            </div>
+                        </Grid>
+
+                        <Grid item md={6} xs={12} style={{paddingBottom: 10}}>
+                            <h3 style={{marginBottom: 0}}>Product Transfer On The Way:</h3>
+                            <List className={settingStyle.productTypeContainer}>
+                                {
+                                    otwProduct.map((e, id) => (
+                                            <ListItem key={id}>
+                                                <ListItemText primary={e.code}/>
+                                            </ListItem>
+                                        )
+                                    )
+                                }
+                            </List>
+
+                            <div className={settingStyle.btnProductType}>
+                                {
+                                    edit ?
+                                        <Fragment>
+                                            <Tooltip onClick={transferDeleteClick} title="Delete Photo"
                                                      aria-label="addProduct">
                                                 <IconButton aria-label="addProduct"
                                                             color={"secondary"}>
@@ -288,10 +345,10 @@ const Setting = () => {
                                 </IconButton>
                             </Tooltip>
 
-                            <Tooltip onClick={cancel} title="Cancel" aria-label="cancel">
-                                <IconButton aria-label="cancelEdit"
+                            <Tooltip onClick={cancel} title="Exit" aria-label="Exit">
+                                <IconButton aria-label="Exit"
                                             color={"primary"}>
-                                    <CancelIcon aria-label="cancelEdit"
+                                    <CancelIcon aria-label="Exit"
                                                 fontSize={"large"}
                                                 color={"secondary"}/>
                                 </IconButton>

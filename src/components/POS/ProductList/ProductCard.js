@@ -9,7 +9,7 @@ const ProductCard = ({classes, price, name, id, picture}) => {
                 <img src={`${serverEndpoint}product/getImage/${picture}`}
                      alt={`Product Picture${id}`}/>
                 <p style={{margin: 0, marginTop: 5}}>{name}</p>
-                <p style={{margin: 0, marginTop: 5}}>{`${price} ₱`}</p>
+                <p style={{margin: 0, marginTop: 5}}>{`₱ ${price}`}</p>
             </div>
 
             <p style={{

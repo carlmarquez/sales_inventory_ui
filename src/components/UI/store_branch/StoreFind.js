@@ -21,7 +21,8 @@ const FindStore = (
         dialog,
         updateStore,
         updateClose,
-        setStore
+        setStore,
+        branch
     }) => {
 
     const [code, setCode] = useState('')
@@ -40,7 +41,17 @@ const FindStore = (
         await baseUrlWithAuth.post(storeFind, {code}).then(e => {
             setError(false)
             if (updateStore === undefined) {
+                if(parseInt(branch) === 0){
+                    alert("Please Select Specific Store")
+                    return
+                }
+
+                if(parseInt(branch) === e.data[0].id){
+                    alert("Can't Transfer With The Same Store")
+                    return
+                }
                 setStore(e.data[0])
+
             } else {
                 updateStore(e.data[0])
             }

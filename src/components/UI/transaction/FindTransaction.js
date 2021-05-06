@@ -20,6 +20,7 @@ const FindTransaction = (
         closeDialog,
         dialog,
         updateTransaction,
+        updateTransactionCode
     }) => {
 
     const [code, setCode] = useState('')
@@ -38,7 +39,12 @@ const FindTransaction = (
         await baseUrlWithAuth.post(transactionFind, {code}).then(e => {
             setError(false)
             setCode('')
-            updateTransaction(e.data)
+
+            if(updateTransaction !== undefined){
+                updateTransaction(e.data)
+            }else{
+                updateTransactionCode(e.data)
+            }
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)

@@ -20,7 +20,10 @@ const Receipt = ({
                      item,
                      setItem,
                      posOn,
-                     transaction
+                     transaction,
+                     setPrice,
+                     setCheckOutDialog,
+                     getData
                  }) => {
 
     const [today, setToday] = useState('')
@@ -79,7 +82,7 @@ const Receipt = ({
 
             setItems(tempItem)
         }
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -87,7 +90,7 @@ const Receipt = ({
             const amount = initialAmount - discount
             setTotalPrice(amount)
         }
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [discount])
 
     const back = () => {
@@ -100,6 +103,12 @@ const Receipt = ({
         const tempDiscount = prompt('Enter Discount Value');
         if (tempDiscount > initialAmount) {
             alert("Make Sure Discount Is Lower Or Equal Than Initial Amount")
+            return
+        }
+
+
+        if (tempDiscount <= 0) {
+            alert("Make Sure Discount Is Greater Than Zero")
             return
         }
 
@@ -122,14 +131,15 @@ const Receipt = ({
             await baseUrlWithAuth.post(transactionInsert, data).then(ignored => {
                 alert("Transaction Save")
                 setValid(false)
-
+                setItem([])
+                getData()
+                setPrice(0)
             }).catch(error => {
                 console.log(error)
             })
-            return
+
         }
 
-        setItem([])
     }
 
 
@@ -230,7 +240,7 @@ const Receipt = ({
         // mywindow.close();
         cancel()
 
-        return true
+        setCheckOutDialog(false)
     }
 
     return (
@@ -328,21 +338,22 @@ const Receipt = ({
                         </div>
 
                         <div className="prices">
-                            <div className="format" style={{paddingLeft: 50,backgroundColor: '#e9e9e9'}}>
+                            <div className="format" style={{paddingLeft: 50, backgroundColor: '#e9e9e9'}}>
                                 <p>Initial Amount</p>
                                 <h2>₱ {initAmount}</h2>
                             </div>
 
-                            <div className="format" style={{paddingLeft: 50, flex: 1,backgroundColor:'#e9e9e9'}}>
+                            <div className="format" style={{paddingLeft: 50, flex: 1, backgroundColor: '#e9e9e9'}}>
                                 <p>DISCOUNT</p>
                                 <h2>₱ {discount}</h2>
                             </div>
 
-                            <div className="format" style={{backgroundColor:'#DEDEDE', width:300,textAlign: 'right'}}>
-                                <div style={{textAlign: 'left',marginLeft:20}}>
-                                    <p style={{width: '100%',fontSize:20 }}><b>Total</b></p>
+                            <div className="format"
+                                 style={{backgroundColor: '#DEDEDE', width: 300, textAlign: 'right'}}>
+                                <div style={{textAlign: 'left', marginLeft: 20}}>
+                                    <p style={{width: '100%', fontSize: 20}}><b>Total</b></p>
                                 </div>
-                                <h2 style={{marginRight:20}}>₱ {totalPrice}</h2>
+                                <h2 style={{marginRight: 20}}>₱ {totalPrice}</h2>
                             </div>
 
                         </div>

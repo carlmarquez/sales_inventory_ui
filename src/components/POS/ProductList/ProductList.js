@@ -1,10 +1,12 @@
-import {Button, CircularProgress, Divider, makeStyles, TextField, Tooltip} from "@material-ui/core"
+import { CircularProgress, Divider, makeStyles, TextField, Tooltip} from "@material-ui/core"
 import ProductCard from "./ProductCard"
 import {useEffect, useState} from "react"
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz'
 import IconButton from "@material-ui/core/IconButton";
-
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import RemoveShoppingCartIcon from '@material-ui/icons/RemoveShoppingCart';
+import PanToolIcon from '@material-ui/icons/PanTool';
 const style = makeStyles(() => ({
     productList: {
         width: '100%',
@@ -40,7 +42,7 @@ const style = makeStyles(() => ({
         justifyContent: 'center',
         flexDirection: 'column',
         width: 150,
-        height: 150,
+        height: 153,
         marginLeft: 10,
         marginTop: 10,
 
@@ -68,7 +70,7 @@ const style = makeStyles(() => ({
 }))
 
 
-const ProductList = ({user, switchUser, logout, checkOut, data}) => {
+const ProductList = ({user,remove, switchUser, logout, checkOut, data,cancelTransaction}) => {
 
     const [search, setSearch] = useState('')
     const [tempData, setTempData] = useState([])
@@ -96,8 +98,31 @@ const ProductList = ({user, switchUser, logout, checkOut, data}) => {
     return (
         <div className={classes.productList}>
             <div className={classes.navigation}>
-                <Button onClick={checkOut} variant={'contained'} style={{marginLeft: 20}} color={'primary'}
-                        disableElevation>CheckOut</Button>
+                <div>
+                    <Tooltip onClick={checkOut} title="Checkout" aria-label="Checkout">
+                        <IconButton aria-label="Checkout"
+                                    color={"primary"}>
+                            <AddShoppingCartIcon fontSize={"large"}/>
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip onClick={remove} title="Remove Product" aria-label="Remove Product">
+                        <IconButton aria-label="Remove Product"
+                                    color={"secondary"}>
+                            <RemoveShoppingCartIcon fontSize={"large"}/>
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip onClick={cancelTransaction} title="Cancel Transaction" aria-label="Cancel Transaction">
+                        <IconButton aria-label="Cancel Transaction"
+                                    color={"primary"}>
+                            <PanToolIcon fontSize={"large"}/>
+                        </IconButton>
+                    </Tooltip>
+
+
+                </div>
+
 
                 <TextField id="outlined-basic" value={search} onChange={(e) => {
                     searchChange(e.target.value)
@@ -129,8 +154,8 @@ const ProductList = ({user, switchUser, logout, checkOut, data}) => {
                 {
                     data.length === 0 ? <h1>No Product Available In This Branch</h1> :
                         loading ? <CircularProgress style={{marginTop: 20}}/> :
-                            tempData.slice(0, 20).map(product =>
-                                <ProductCard key={product.id} price={product.price} classes={classes}
+                            tempData.slice(0, 20).map((product,id) =>
+                                <ProductCard key={id} price={product.price} classes={classes}
                                              name={product.name}
                                              id={product.code} picture={product.photo}/>)
 

@@ -10,7 +10,10 @@ import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {supplierInsert} from "../../../utils/ServerEndPoint";
 import Response from '../../../utils/Response/Response'
-
+import CheckCellPhoneNumber from '../../../utils/FormError/CheckCellphoneNumber'
+import CheckEmail from '../../../utils/FormError/CheckEmail'
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 
 const SupplierRegister = (
     {
@@ -35,6 +38,17 @@ const SupplierRegister = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form validation
+    const [emailError, setEmailError] = useState(false)
+    const [cellPhoneNumberError, setCellPhoneNumberError] = useState(false)
+    const [telephoneNumberError, setTelephoneNumberError] = useState(false)
+
+    // form validation message
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [cellPhoneNumberErrorMessage, setCellPhoneNumberErrorMessage] = useState('')
+    const [telephoneNumberErrorMessage, setTelephoneNumberErrorMessage] = useState('')
+
+
     const close = () => {
         setShow(false)
     }
@@ -42,7 +56,7 @@ const SupplierRegister = (
 
     const register = (event) => {
 
-
+        let error = false
         event.preventDefault()
 
         if (name.trim().length === 0) {
@@ -50,39 +64,56 @@ const SupplierRegister = (
             return
         }
 
-        if(email.trim().length === 0){
-            alert("Please enter a email")
-            return
+        if (email.length >0 && !CheckEmail(email,setEmailError,setEmailErrorMessage, 'PLease Input A Valid Email')) {
+            error = true
+        }else{
+            RemoveError(setEmailError,setEmailErrorMessage)
         }
 
-        const data = {
-            name: name,
-            email: email,
-            address: address,
-            city: city,
-            postalCode: postalCode.length ===0? 1: postalCode,
-            mobile_no: mobileNo,
-            tel_no: telNo
+        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo,setCellPhoneNumberError,setCellPhoneNumberErrorMessage ,'Please Input A Valid Cellphone Number')) {
+            error = true
+        }else{
+            RemoveError(setCellPhoneNumberError,setCellPhoneNumberErrorMessage)
         }
 
 
-        baseUrlWithAuth.post(supplierInsert, data).then(ignored => {
-            Reload()
-            setName('')
-            setEmail('')
-            setAddress('')
-            setCity('')
-            setPostalCode('')
-            setTelNo('')
-            setMobileNo('')
-            setError(false)
-            setShow(true)
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
+        if(telNo.length >0 && !CheckTelephoneNumber(telNo,setTelephoneNumberError,setTelephoneNumberErrorMessage,'Please Input A Valid Landline')){
+            error = true
+        }else{
+            RemoveError(setTelephoneNumberError,setTelephoneNumberErrorMessage)
+        }
+
+
+        if(!error){
+            const data = {
+                name: name,
+                email: email,
+                address: address,
+                city: city,
+                postalCode: postalCode.length === 0 ? 1 : postalCode,
+                mobile_no: mobileNo,
+                tel_no: telNo
+            }
+
+
+            baseUrlWithAuth.post(supplierInsert, data).then(ignored => {
+                Reload()
+                setName('')
+                setEmail('')
+                setAddress('')
+                setCity('')
+                setPostalCode('')
+                setTelNo('')
+                setMobileNo('')
+                setError(false)
+                setShow(true)
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+                setError(true)
+            })
+        }
 
 
     }
@@ -124,82 +155,80 @@ const SupplierRegister = (
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Company Email"
-                                   type="email"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={email}
-                                   onChange={(e) => setEmail(e.target.value)}
+                            error={emailError}
+                            helperText={emailErrorMessage}
+                            margin="dense"
+                            label="Company Email"
+                            type="email"
+                            fullWidth
+                            variant="outlined"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={8} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   label="Home Address"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   value={address}
-                                   onChange={(e) => setAddress(e.target.value)}
+                            margin="dense"
+                            label="Company Address"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={2} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="city"
-                                   label="City"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='city'
-                                   value={city}
-                                   onChange={(e) => setCity(e.target.value)}
+                            margin="dense"
+                            label="City"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
                         />
                     </Grid>
 
 
                     <Grid item md={2} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="postal"
-                                   label="postal code"
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='postal'
-                                   value={postalCode}
-                                   onChange={e => setPostalCode(e.target.value)}
+                            margin="dense"
+                            label="Postal Code"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            value={postalCode}
+                            onChange={e => setPostalCode(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="mobile-no"
-                                   label="Mobile No."
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='mobile-no'
-                                   value={mobileNo}
-                                   onChange={e => setMobileNo(e.target.value)}
+                            error={cellPhoneNumberError}
+                            helperText={cellPhoneNumberErrorMessage}
+                            margin="dense"
+                            label="Mobile Number"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={mobileNo}
+                            onChange={e => setMobileNo(e.target.value)}
                         />
                     </Grid>
 
                     <Grid item md={6} xs={12}>
                         <TextField
-                                   margin="dense"
-                                   id="telNo"
-                                   label="Telephone No."
-                                   type="text"
-                                   fullWidth
-                                   variant="outlined"
-                                   name='telNo'
-                                   value={telNo}
-                                   onChange={e => setTelNo(e.target.value)}
+                            error={telephoneNumberError}
+                            helperText={telephoneNumberErrorMessage}
+                            margin="dense"
+                            label="Telephone Number"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            value={telNo}
+                            onChange={e => setTelNo(e.target.value)}
                         />
                     </Grid>
 

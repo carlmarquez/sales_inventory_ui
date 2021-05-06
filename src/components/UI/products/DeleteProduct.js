@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -46,7 +45,7 @@ const DeleteProduct = (
             branch
         }
 
-        baseUrlWithAuth.post(productDelete, data).then(e => {
+        baseUrlWithAuth.post(productDelete, data).then(ignored => {
             setError(false)
             setShow(true)
             deleteProduct(data)
@@ -111,7 +110,7 @@ const DeleteProduct = (
 
             <DialogActions>
 
-                <Button type={"submit"} color='secondary'onClick={register}>
+                <Button type={"submit"} color='secondary' onClick={register}>
                     Delete
                 </Button>
                 <Button onClick={() => closeDialog(false)} color='primary'  >

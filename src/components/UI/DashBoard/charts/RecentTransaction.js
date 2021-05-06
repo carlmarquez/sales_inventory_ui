@@ -1,13 +1,10 @@
 import {Fragment, useEffect, useState} from 'react';
-import Link from '@material-ui/core/Link';
-import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
-import Button from "@material-ui/core/Button";
 import {dashBoardTodayTransaction} from "../../../../utils/ServerEndPoint";
 import {baseUrlWithAuth} from "../../../mainUI/BaseUrlWithAuth";
 import {MonthsWord} from "../../../../utils/date/ConvertMonthWord";
@@ -25,6 +22,7 @@ export default function RecentTransaction({setTotal}) {
         const getData = async () => {
            await baseUrlWithAuth.get(dashBoardTodayTransaction)
                 .then(transactions => {
+                    // eslint-disable-next-line array-callback-return
                     transactions.data.map(transaction => {
                         amount += transaction.amount
                         temp.push(createData(transaction.createdAt, transaction.code, transaction.Store.location, transaction.User.email, transaction.amount))
@@ -39,6 +37,7 @@ export default function RecentTransaction({setTotal}) {
         }
 
         getData().then(ignored => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return (
         <Fragment>
@@ -47,7 +46,7 @@ export default function RecentTransaction({setTotal}) {
                 <TableHead>
                     <TableRow>
                         <TableCell>Date</TableCell>
-                        <TableCell>Transaction ID</TableCell>
+                        <TableCell>Transaction Code</TableCell>
                         <TableCell>Branch</TableCell>
                         <TableCell>Assign User</TableCell>
                         <TableCell align="right">Value</TableCell>

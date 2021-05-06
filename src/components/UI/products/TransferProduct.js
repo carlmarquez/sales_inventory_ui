@@ -13,11 +13,11 @@ import Divider from '@material-ui/core/Divider';
 
 import {useEffect, useState, Fragment} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {productTransfer, storeList} from "../../../utils/ServerEndPoint";
-import Response from "../../../utils/Response/Response";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@material-ui/core";
+import {CreateTransfer} from "../../../utils/ServerEndPoint";
+import {Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@material-ui/core";
 
 import StoreFind from "../store_branch/StoreFind";
+import {adjectives, animals, colors, uniqueNamesGenerator} from "unique-names-generator";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -48,10 +48,11 @@ function intersection(a, b) {
 
 const TransferProduct = (
     {
+        userId,
+        branch,
         data,
         closeDialog,
-        dialog,
-        transfer
+        dialog
     }) => {
     // For Transfer Dialog
     const classes = useStyles();
@@ -60,8 +61,9 @@ const TransferProduct = (
     const [right, setRight] = useState([]);
 
     const [tempLeft, setTempLeft] = useState([])
-    const leftChecked = intersection(checked, left);
+    const leftChecked = intersection(checked, tempLeft);
     const rightChecked = intersection(checked, right);
+
     // for find the branch dialog
     const [findDialog, setFindDialog] = useState()
     const [toTransferBranch, setToTransferBranch] = useState()
@@ -98,12 +100,12 @@ const TransferProduct = (
 
     const handleCheckedRight = () => {
         setRight(right.concat(leftChecked));
-        setLeft(not(left, leftChecked));
+        setTempLeft(not(tempLeft, leftChecked))
         setChecked(not(checked, leftChecked));
     };
 
     const handleCheckedLeft = () => {
-        setLeft(left.concat(rightChecked));
+        setTempLeft(tempLeft.concat(rightChecked));
         setRight(not(right, rightChecked));
         setChecked(not(checked, rightChecked));
     };
@@ -117,15 +119,7 @@ const TransferProduct = (
                 avatar={
                     change === null ? null :
                         <TextField placeholder={'Search Product Name'} onChange={(e) => change(e.target.value)}/>
-                    // <Checkbox
-                    //     onClick={handleToggleAll(items)}
-                    //     checked={numberOfChecked(items) === items.length &&   items.length !== 0}
-                    //     indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
-                    //     disabled={items.length === 0}
-                    //     inputProps={{ 'aria-label': 'all items selected' }}
-                    // />
                 }
-                // subheader={`${numberOfChecked(items)}/${it/**/ems.length} selected`}
             />
             <Divider/>
             <List className={classes.list} dense component="div" role="list">
@@ -152,41 +146,52 @@ const TransferProduct = (
     );
 
 
-    // for autocomplete
-    const [stores, setStores] = useState([])
-
-    const [qty, setQty] = useState(1)
-    const [code, setCode] = useState('')
-    const [store, setStore] = useState(null)
-
-
-    // for snack bar
-    const [show, setShow] = useState(false)
-    const [error, setError] = useState(false)
-    const [errorTitle, setErrorTitle] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
-
-
-    const register = (event) => {
+    const register = async (event) => {
         event.preventDefault()
 
-        if(right.length === 0) {
+        const code = uniqueNamesGenerator({
+            dictionaries: [adjectives, colors, animals],
+            separator: '-',
+            length: 3,
+            style: 'lowerCase'
+        })
+
+        if (right.length === 0) {
             alert('Container Is Empty')
             return
         }
+
+        const data = {
+            code,
+            From: branch,
+            ArrangeBy: userId,
+            ToId: toTransferBranch,
+            products: right
+        }
+
+        await baseUrlWithAuth.post(CreateTransfer, data).then(ignored => {
+            setRight([])
+            alert('Transfer Product Created Code: ' + code)
+        }).catch(error => {
+            console.log(error)
+        })
     }
 
     useEffect(() => {
         setLeft(data)
         setTempLeft(data)
         setFindDialog(dialog)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dialog])
     return <Fragment>
         {
-            findDialog ===true ? <StoreFind  updateClose={closeDialog}
-                                             closeDialog={() => setFindDialog(false)}
-                                             dialog={findDialog}
-                                             setStore={setToTransferBranch}/>
+            findDialog === true ? <StoreFind
+                    branch={branch}
+                    updateClose={closeDialog}
+                    closeDialog={() => setFindDialog(false)}
+                    dialog={findDialog}
+                    setStore={setToTransferBranch}
+                />
                 :
                 <Dialog
                     open={dialog}
@@ -196,7 +201,8 @@ const TransferProduct = (
                     fullWidth
                 >
 
-                    <DialogTitle style={{color: 'black', backgroundColor: '#DEDEDE'}}><b>Transfer Product To Branch</b></DialogTitle>
+                    <DialogTitle style={{color: 'black', backgroundColor: '#DEDEDE'}}><b>Transfer Product To Another
+                        Branch</b></DialogTitle>
                     <DialogContent style={{backgroundColor: '#DEDEDE'}}>
                         <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
                             <Grid item>{customList('Select Product', tempLeft, filterLeft)}</Grid>
@@ -228,7 +234,8 @@ const TransferProduct = (
                                     </Button>
                                 </Grid>
                             </Grid>
-                            <Grid item>{customList(`Product To Be Transferred To Branch ${toTransferBranch === undefined?'': toTransferBranch.location}`, right, null)}</Grid>
+                            <Grid
+                                item>{customList(`Product To Be Transferred To Branch ${toTransferBranch === undefined ? '' : toTransferBranch.location}`, right, null)}</Grid>
                         </Grid>
                     </DialogContent>
                     <DialogActions style={{backgroundColor: '#DEDEDE'}}>

@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {CustomerInsert} from "../../../utils/ServerEndPoint";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 import {
     Button,
     Dialog,
@@ -11,13 +12,14 @@ import {
     TextField
 } from "@material-ui/core";
 import Response from "../../../utils/Response/Response";
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CheckEmail from "../../../utils/FormError/CheckEmail";
+import CheckCellPhoneNumber from '../../../utils/FormError/CheckCellphoneNumber'
 
 const CustomerForm = (
     {
         closeDialog,
-        dialog,
-        insertData
-
+        dialog
     }) => {
 
     const [name, setName] = useState('')
@@ -35,6 +37,16 @@ const CustomerForm = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form validation
+    const [emailError, setEmailError] = useState(false)
+    const [cellPhoneNumberError, setCellPhoneNumberError] = useState(false)
+    const [telephoneNumberError, setTelephoneNumberError] = useState(false)
+
+    // form validation message
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [cellPhoneNumberErrorMessage, setCellPhoneNumberErrorMessage] = useState('')
+    const [telephoneNumberErrorMessage, setTelephoneNumberErrorMessage] = useState('')
+
     const close = () => {
         setShow(false)
     }
@@ -42,7 +54,7 @@ const CustomerForm = (
 
     const register = (event) => {
 
-
+        let error = false
         event.preventDefault()
 
         if (name.trim().length === 0) {
@@ -50,38 +62,54 @@ const CustomerForm = (
             return
         }
 
-        if(email.trim().length ===0){
-            alert("Please Enter Email")
-            return
+        if (email.length > 0 && !CheckEmail(email, setEmailError, setEmailErrorMessage, 'PLease Input A Valid Email')) {
+            error = true
+        } else {
+            RemoveError(setEmailError, setEmailErrorMessage)
         }
 
-        const data = {
-            name,
-            email,
-            address: address.trim().length === 0? 'Hidden': address,
-            city: city.trim().length === 0? 'Hidden': city,
-            postalCode: postalCode.length === 0 ? 1 : postalCode,
-            mobile_no: mobileNo.trim().length ===0? 'Hidden': mobileNo,
-            tel_no: telNo.trim().length === 0?'Hidden': telNo
+        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo, setCellPhoneNumberError, setCellPhoneNumberErrorMessage, 'Please Input A Valid Cellphone Number')) {
+            error = true
+        } else {
+            RemoveError(setCellPhoneNumberError, setCellPhoneNumberErrorMessage)
         }
 
 
-        baseUrlWithAuth.post(CustomerInsert, data).then(ignored => {
-            setName('')
-            setEmail('')
-            setAddress('')
-            setCity('')
-            setPostalCode('')
-            setTelNo('')
-            setMobileNo('')
-            setError(false)
-            setShow(true)
-        }).catch(error => {
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-            setError(true)
-        })
+        if (telNo.length > 0 && !CheckTelephoneNumber(telNo, setTelephoneNumberError, setTelephoneNumberErrorMessage, 'Please Input A Valid Landline')) {
+            error = true
+        } else {
+            RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
+        }
+
+        if (!error) {
+            const data = {
+                name,
+                email,
+                address: address.trim().length === 0 ? 'Hidden' : address,
+                city: city.trim().length === 0 ? 'Hidden' : city,
+                postalCode: postalCode.length === 0 ? 1 : postalCode,
+                mobile_no: mobileNo.trim().length === 0 ? 'Hidden' : mobileNo,
+                tel_no: telNo.trim().length === 0 ? 'Hidden' : telNo
+            }
+
+
+            baseUrlWithAuth.post(CustomerInsert, data).then(ignored => {
+                setName('')
+                setEmail('')
+                setAddress('')
+                setCity('')
+                setPostalCode('')
+                setTelNo('')
+                setMobileNo('')
+                setError(false)
+                setShow(true)
+            }).catch(error => {
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+                setError(true)
+            })
+        }
 
 
     }
@@ -122,6 +150,8 @@ const CustomerForm = (
 
                     <Grid item md={6} xs={12}>
                         <TextField
+                            error={emailError}
+                            helperText={emailErrorMessage}
                             margin="dense"
                             label="Customer Email"
                             type="email"
@@ -162,7 +192,7 @@ const CustomerForm = (
                             margin="dense"
                             id="postal"
                             label="postal code"
-                            type="text"
+                            type="number"
                             fullWidth
                             variant="outlined"
                             name='postal'
@@ -173,9 +203,11 @@ const CustomerForm = (
 
                     <Grid item md={6} xs={12}>
                         <TextField
+                            error={cellPhoneNumberError}
+                            helperText={cellPhoneNumberErrorMessage}
                             margin="dense"
                             id="mobile-no"
-                            label="Mobile No."
+                            label="Mobile Number"
                             type="text"
                             fullWidth
                             variant="outlined"
@@ -187,13 +219,13 @@ const CustomerForm = (
 
                     <Grid item md={6} xs={12}>
                         <TextField
+                            error={telephoneNumberError}
+                            helperText={telephoneNumberErrorMessage}
                             margin="dense"
-                            id="telNo"
-                            label="Telephone No."
+                            label="Telephone Number"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            name='telNo'
                             value={telNo}
                             onChange={e => setTelNo(e.target.value)}
                         />
@@ -216,4 +248,4 @@ const CustomerForm = (
 }
 
 
-export default  CustomerForm
+export default CustomerForm

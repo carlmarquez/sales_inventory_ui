@@ -14,6 +14,10 @@ import {
 } from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 import StoreFind from "./StoreFind";
+import CheckEmail from "../../../utils/FormError/CheckEmail";
+import RemoveError from "../../../utils/FormError/RemoveError";
+import CheckCellPhoneNumber from "../../../utils/FormError/CheckCellphoneNumber";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 
 
 const StoreUpdate = (
@@ -30,7 +34,7 @@ const StoreUpdate = (
     const [postalCode, setPostalCode] = useState('')
     const [mobileNo, setMobileNo] = useState('')
     const [telNo, setTelNo] = useState('')
-    const [code,setCode] =useState('')
+    const [code, setCode] = useState('')
 
 
     const [findStoreDialog, setFindStoreDialog] = useState(false)
@@ -41,36 +45,74 @@ const StoreUpdate = (
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
 
+    // form validation
+    const [emailError, setEmailError] = useState(false)
+    const [cellPhoneNumberError, setCellPhoneNumberError] = useState(false)
+    const [telephoneNumberError, setTelephoneNumberError] = useState(false)
+
+    // form validation message
+    const [emailErrorMessage, setEmailErrorMessage] = useState('')
+    const [cellPhoneNumberErrorMessage, setCellPhoneNumberErrorMessage] = useState('')
+    const [telephoneNumberErrorMessage, setTelephoneNumberErrorMessage] = useState('')
 
     const register = async (event) => {
         event.preventDefault()
+        let error = false
 
 
-        if(location.trim().length === 0){
+        if (location.trim().length === 0) {
             alert("Please enter a email")
             return
         }
 
-        const data = {
-            location,
-            code,
-            email: email,
-            postalCode: postalCode.length ===0? 1: postalCode,
-            mobile_no: mobileNo.trim().length===0? '': mobileNo,
-            tel_no: telNo.trim().length === 0? '': telNo
+        if (location.trim().length === 0) {
+            alert("Please enter store name")
+            return
         }
 
-        await baseUrlWithAuth.post(storeUpdate, data).then(ignored => {
-            setError(false)
-            Reload()
-            alert("Update Success")
-            setFindStoreDialog(true)
-        }).catch(error => {
-            console.log(error)
-            const response = error.response.data
-            setErrorMessage(response.message)
-            setErrorTitle(response.title)
-        })
+
+        if (email.length > 0 && !CheckEmail(email, setEmailError, setEmailErrorMessage, 'PLease Input A Valid Email')) {
+            error = true
+        } else {
+            RemoveError(setEmailError, setEmailErrorMessage)
+        }
+
+        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo, setCellPhoneNumberError, setCellPhoneNumberErrorMessage, 'Please Input A Valid Cellphone Number')) {
+            error = true
+        } else {
+            RemoveError(setCellPhoneNumberError, setCellPhoneNumberErrorMessage)
+        }
+
+
+        if (telNo.length > 0 && !CheckTelephoneNumber(telNo, setTelephoneNumberError, setTelephoneNumberErrorMessage, 'Please Input A Valid Landline')) {
+            error = true
+        } else {
+            RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
+        }
+
+
+        if (!error) {
+            const data = {
+                location,
+                code,
+                email: email,
+                postalCode: postalCode.length === 0 ? 1 : postalCode,
+                mobile_no: mobileNo.trim().length === 0 ? '' : mobileNo,
+                tel_no: telNo.trim().length === 0 ? '' : telNo
+            }
+
+            await baseUrlWithAuth.post(storeUpdate, data).then(ignored => {
+                setError(false)
+                Reload()
+                alert("Update Success")
+                setFindStoreDialog(true)
+            }).catch(error => {
+                console.log(error)
+                const response = error.response.data
+                setErrorMessage(response.message)
+                setErrorTitle(response.title)
+            })
+        }
 
 
     }
@@ -134,8 +176,10 @@ const StoreUpdate = (
 
                                 <Grid item md={4} xs={12}>
                                     <TextField
+                                        error={emailError}
+                                        helperText={emailErrorMessage}
                                         margin="dense"
-                                        label="Store Email"
+                                        label="Email"
                                         type="email"
                                         fullWidth
                                         variant="outlined"
@@ -148,7 +192,7 @@ const StoreUpdate = (
                                     <TextField
                                         margin="dense"
                                         label="Postal Code"
-                                        type="text"
+                                        type="number"
                                         fullWidth
                                         variant="outlined"
                                         value={postalCode}
@@ -158,8 +202,10 @@ const StoreUpdate = (
 
                                 <Grid item md={6} xs={12}>
                                     <TextField
+                                        error={cellPhoneNumberError}
+                                        helperText={cellPhoneNumberErrorMessage}
                                         margin="dense"
-                                        label="Mobile No."
+                                        label="Mobile Number"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
@@ -170,8 +216,10 @@ const StoreUpdate = (
 
                                 <Grid item md={6} xs={12}>
                                     <TextField
+                                        error={telephoneNumberError}
+                                        helperText={telephoneNumberErrorMessage}
                                         margin="dense"
-                                        label="Telephone No."
+                                        label="Telephone Number"
                                         type="text"
                                         fullWidth
                                         variant="outlined"
