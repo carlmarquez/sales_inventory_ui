@@ -60,7 +60,7 @@ const UserRegister = (
     const [storeErrorMessage, setStoreErrorMessage] = useState('')
 
     useEffect(() => {
-        setStoreId(user.StoreId)
+        setStoreId(user.role ===2?user.StoreId:'')
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.role])
 
