@@ -1,36 +1,37 @@
+import {useState} from "react";
+import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
+import {CustomerUpdate} from "../../../utils/ServerEndPoint";
+import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
 import {
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Grid, TextField
-} from "@material-ui/core"
-import {useState} from "react";
-import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {supplierInsert} from "../../../utils/ServerEndPoint";
-import Response from '../../../utils/Response/Response'
-import CheckCellPhoneNumber from '../../../utils/FormError/CheckCellphoneNumber'
-import CheckEmail from '../../../utils/FormError/CheckEmail'
+    Grid,
+    TextField
+} from "@material-ui/core";
+import Response from "../../../utils/Response/Response";
 import RemoveError from "../../../utils/FormError/RemoveError";
-import CheckTelephoneNumber from "../../../utils/FormError/CheckTelephoneNumber";
+import CheckEmail from "../../../utils/FormError/CheckEmail";
+import CheckCellPhoneNumber from '../../../utils/FormError/CheckCellphoneNumber'
 
-const SupplierRegister = (
+const CustomerFormUpdate = (
     {
         closeDialog,
         dialog,
-        Reload
-
+        customer,
+        setCustomer,
+        getData
     }) => {
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [address, setAddress] = useState('')
-    const [city, setCity] = useState('')
-    const [postalCode, setPostalCode] = useState('')
-    const [mobileNo, setMobileNo] = useState('')
-    const [telNo, setTelNo] = useState('')
-    const [contactPerson, setContactPerson] = useState('')
+    const [name, setName] = useState(customer.name)
+    const [email, setEmail] = useState(customer.email)
+    const [address, setAddress] = useState(customer.email)
+    const [city, setCity] = useState(customer.city)
+    const [postalCode, setPostalCode] = useState(customer.postalCode)
+    const [mobileNo, setMobileNo] = useState(customer.mobile_no)
+    const [telNo, setTelNo] = useState(customer.tel_no)
 
 
     // for snack bar
@@ -53,6 +54,10 @@ const SupplierRegister = (
         setShow(false)
     }
 
+    const cancel = () => {
+        setCustomer()
+        closeDialog()
+    }
 
     const register = (event) => {
 
@@ -60,61 +65,54 @@ const SupplierRegister = (
         event.preventDefault()
 
         if (name.trim().length === 0) {
-            alert("Please Company Name")
+            alert("Please Enter Customer Name")
             return
         }
 
-        if(contactPerson.trim().length === 0){
-            alert("Please Enter A Contact Person")
-            return
-        }
-
-
-        if (email.length >0 && !CheckEmail(email,setEmailError,setEmailErrorMessage, 'PLease Input A Valid Email')) {
+        if (email.length > 0 && !CheckEmail(email, setEmailError, setEmailErrorMessage, 'PLease Input A Valid Email')) {
             error = true
-        }else{
-            RemoveError(setEmailError,setEmailErrorMessage)
+        } else {
+            RemoveError(setEmailError, setEmailErrorMessage)
         }
 
-        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo,setCellPhoneNumberError,setCellPhoneNumberErrorMessage ,'Please Input A Valid Cellphone Number')) {
+        if (mobileNo.length > 0 && !CheckCellPhoneNumber(mobileNo, setCellPhoneNumberError, setCellPhoneNumberErrorMessage, 'Please Input A Valid Cellphone Number')) {
             error = true
-        }else{
-            RemoveError(setCellPhoneNumberError,setCellPhoneNumberErrorMessage)
+        } else {
+            RemoveError(setCellPhoneNumberError, setCellPhoneNumberErrorMessage)
         }
 
 
-        if(telNo.length >0 && !CheckTelephoneNumber(telNo,setTelephoneNumberError,setTelephoneNumberErrorMessage,'Please Input A Valid Landline')){
+        if (telNo.length > 0 && !CheckTelephoneNumber(telNo, setTelephoneNumberError, setTelephoneNumberErrorMessage, 'Please Input A Valid Landline')) {
             error = true
-        }else{
-            RemoveError(setTelephoneNumberError,setTelephoneNumberErrorMessage)
+        } else {
+            RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
         }
 
-
-        if(!error){
+        if (!error) {
             const data = {
-                name: name,
-                email: email,
-                address: address,
-                city: city,
+                id: customer.id,
+                name,
+                email,
+                address: address.trim().length === 0 ? 'Hidden' : address,
+                city: city.trim().length === 0 ? 'Hidden' : city,
                 postalCode: postalCode.length === 0 ? 1 : postalCode,
-                mobile_no: mobileNo,
-                tel_no: telNo,
-                contactPerson
+                mobile_no: mobileNo.trim().length === 0 ? 'Hidden' : mobileNo,
+                tel_no: telNo.trim().length === 0 ? 'Hidden' : telNo
             }
 
 
-            baseUrlWithAuth.post(supplierInsert, data).then(ignored => {
-                Reload()
-                setName('')
+            baseUrlWithAuth.post(CustomerUpdate, data).then(ignored => {
+                alert("Customer Update Success")
+                setShow(true)
                 setEmail('')
                 setAddress('')
                 setCity('')
                 setPostalCode('')
                 setTelNo('')
                 setMobileNo('')
-                setContactPerson('')
                 setError(false)
-                setShow(true)
+                getData().then(ignored => {})
+                setCustomer()
             }).catch(error => {
                 const response = error.response.data
                 setErrorMessage(response.message)
@@ -128,30 +126,29 @@ const SupplierRegister = (
 
     return <Dialog
         open={dialog}
-        onClose={closeDialog}
+        onClose={cancel}
         aria-labelledby="add-student"
         maxWidth={"md"}
     >
         <form noValidate={false} onSubmit={register}>
 
 
-            <DialogTitle id="add-student">Register Supplier</DialogTitle>
+            <DialogTitle id="add-student">Register Customer</DialogTitle>
             <DialogContent>
-
 
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
                           showSnackBar={show}
-                          successMessage='Supplier Register Success'
+                          successMessage='Customer Update Success'
                           closeSnackBar={close}
                 />
 
                 <Grid container spacing={1}>
-                    <Grid item md={4} xs={12}>
+                    <Grid item md={6} xs={12}>
                         <TextField autoFocus
                                    margin="dense"
-                                   label="Company Name"
+                                   label="Customer Name"
                                    type="text"
                                    fullWidth
                                    variant="outlined"
@@ -161,24 +158,12 @@ const SupplierRegister = (
 
                     </Grid>
 
-                    <Grid item md={4} xs={12}>
-                        <TextField
-                            margin="dense"
-                            label="Contact Person"
-                            type="email"
-                            fullWidth
-                            variant="outlined"
-                            value={contactPerson}
-                            onChange={(e) => setContactPerson(e.target.value)}
-                        />
-                    </Grid>
-
-                    <Grid item md={4} xs={12}>
+                    <Grid item md={6} xs={12}>
                         <TextField
                             error={emailError}
                             helperText={emailErrorMessage}
                             margin="dense"
-                            label="Email"
+                            label="Customer Email"
                             type="email"
                             fullWidth
                             variant="outlined"
@@ -190,7 +175,7 @@ const SupplierRegister = (
                     <Grid item md={8} xs={12}>
                         <TextField
                             margin="dense"
-                            label="Company Address"
+                            label="Home Address"
                             type="text"
                             fullWidth
                             variant="outlined"
@@ -215,10 +200,12 @@ const SupplierRegister = (
                     <Grid item md={2} xs={12}>
                         <TextField
                             margin="dense"
-                            label="Postal Code"
+                            id="postal"
+                            label="postal code"
                             type="number"
                             fullWidth
                             variant="outlined"
+                            name='postal'
                             value={postalCode}
                             onChange={e => setPostalCode(e.target.value)}
                         />
@@ -229,10 +216,12 @@ const SupplierRegister = (
                             error={cellPhoneNumberError}
                             helperText={cellPhoneNumberErrorMessage}
                             margin="dense"
+                            id="mobile-no"
                             label="Mobile Number"
                             type="text"
                             fullWidth
                             variant="outlined"
+                            name='mobile-no'
                             value={mobileNo}
                             onChange={e => setMobileNo(e.target.value)}
                         />
@@ -244,7 +233,7 @@ const SupplierRegister = (
                             helperText={telephoneNumberErrorMessage}
                             margin="dense"
                             label="Telephone Number"
-                            type="number"
+                            type="text"
                             fullWidth
                             variant="outlined"
                             value={telNo}
@@ -258,9 +247,9 @@ const SupplierRegister = (
             <DialogActions>
 
                 <Button type={"submit"} color='primary' onClick={register}>
-                    Register
+                    Update
                 </Button>
-                <Button onClick={() => closeDialog(false)} color='secondary'>
+                <Button onClick={cancel} color='secondary'>
                     Cancel
                 </Button>
             </DialogActions>
@@ -269,4 +258,4 @@ const SupplierRegister = (
 }
 
 
-export default SupplierRegister
+export default CustomerFormUpdate

@@ -20,7 +20,13 @@ import {
     InsertProductType,
     ListProductType,
     productImages,
-    productDeleteImage, DeleteProductType, SetCriticalStock, GetCriticalStock, OnTheWayTransfer, TransferDelete
+    productDeleteImage,
+    DeleteProductType,
+    SetCriticalStock,
+    GetCriticalStock,
+    OnTheWayTransfer,
+    TransferDelete,
+    storeRequest
 } from "../../../utils/ServerEndPoint";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 
@@ -54,20 +60,19 @@ const Setting = () => {
     const settingStyle = useStyles()
 
     const [edit, setEdit] = useState(false)
+
     const [productTypes, setProductTypes] = useState([])
     const [productPhoto, setProductPhoto] = useState([])
+    const [storeRequesting, setStoreRequesting] = useState([])
     const [criticalStock, setCriticalStock] = useState(0)
     const [otwProduct, setOtwProduct] = useState([])
 
     useEffect(() => {
-        getProductType().then(ignored => {
-        })
-        getPhoto().then(ignored => {
-        })
-        getCriticalStock().then(ignored => {
-        })
-        getOtwTransfer().then(ignored => {
-        })
+        getProductType().then(ignored => {})
+        getPhoto().then(ignored => {})
+        getCriticalStock().then(ignored => {})
+        getOtwTransfer().then(ignored => {})
+        getStoreRequest().then(ignored => {})
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -81,6 +86,16 @@ const Setting = () => {
         })
 
         setOtwProduct(temp)
+    }
+
+    const getStoreRequest = async () => {
+        const temp = []
+
+        await baseUrlWithAuth.get(storeRequest).then(stores => {
+            stores.data.map(store => temp.push(store))
+        }).catch(ignored => {})
+
+        setStoreRequesting(temp)
     }
 
     const cancel = () => {
@@ -129,7 +144,8 @@ const Setting = () => {
         const data = {name: value}
         baseUrlWithAuth.post(DeleteProductType, data)
             .then(e => {
-                getProductType().then(ignored => {})
+                getProductType().then(ignored => {
+                })
                 alert(e.data.message)
             })
             .catch(e => {
@@ -143,7 +159,8 @@ const Setting = () => {
         await baseUrlWithAuth.post(productDeleteImage, data)
             .then((e) => {
                 alert(e.data.message)
-                getPhoto().then(ignored => {})
+                getPhoto().then(ignored => {
+                })
             })
             .catch((error) => {
                 alert(error.response.data.message)
@@ -181,9 +198,10 @@ const Setting = () => {
         const value = window.prompt('Enter Product Type')
         const data = {code: value}
 
-        await baseUrlWithAuth.post(TransferDelete,data).then(e => {
+        await baseUrlWithAuth.post(TransferDelete, data).then(e => {
             alert(e.data.message)
-            getOtwTransfer().then(ignored => {})
+            getOtwTransfer().then(ignored => {
+            })
         })
     }
 
@@ -317,6 +335,23 @@ const Setting = () => {
                                         </Fragment> : null
                                 }
                             </div>
+                        </Grid>
+
+
+                        <Grid item md={6} xs={12} style={{paddingBottom: 10}}>
+                            <h3 style={{marginBottom: 0}}>Branch Requesting To Supply Their Critical Stock</h3>
+                            <List className={settingStyle.productTypeContainer}>
+                                {
+                                    storeRequesting.map((e, id) => (
+                                            <ListItem key={id}>
+                                                <ListItemText primary={`${e.location} - ${e.code}`}/>
+                                            </ListItem>
+                                        )
+                                    )
+                                }
+                            </List>
+
+
                         </Grid>
                     </Grid>
                 </form>

@@ -9,38 +9,44 @@ import {
 } from "@material-ui/core"
 import {useState} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
-import {
-    CustomerFind
-} from "../../../utils/ServerEndPoint";
+import {supplierReceiptDelete} from "../../../utils/ServerEndPoint";
 import Response from "../../../utils/Response/Response";
 
 
-const FindCustomer = (
+const DeleteReceipt = (
     {
         closeDialog,
         dialog,
-        print,
-        setCustomer
+        getData
     }) => {
 
-    const [email, setEmail] = useState('')
+    const [code, setCode] = useState('')
 
 
     // for snack bar
+    const [show, setShow] = useState(false)
     const [error, setError] = useState(false)
     const [errorTitle, setErrorTitle] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
-    const [show,setShow] = useState(false)
+
+    const close = () => {
+        setShow(false)
+    }
 
 
-    const register = async (event) => {
+    const register = (event) => {
         event.preventDefault()
-        await baseUrlWithAuth.post(CustomerFind, {email}).then(e => {
-            setEmail('')
-            setCustomer(e.data)
-            if(print !== undefined){
-                print()
-            }
+
+        const data = {
+            code
+        }
+
+        baseUrlWithAuth.post(supplierReceiptDelete, data).then(ignored => {
+            getData().then(ignored=> {})
+            setError(false)
+            setShow(true)
+            setCode('')
+
         }).catch(error => {
             const response = error.response.data
             setErrorMessage(response.message)
@@ -48,59 +54,53 @@ const FindCustomer = (
             setError(true)
         })
 
-    }
 
-    const cancel = () => {
-        closeDialog(false)
-        setCustomer()
     }
-
     return <Dialog
         open={dialog}
-        onClose={cancel}
+        onClose={closeDialog}
         aria-labelledby="add-student"
         maxWidth={"md"}
         fullWidth
     >
-        <form onSubmit={register}>
+        <form  onSubmit={register}>
 
-            <DialogTitle id="add-student">Find Customer</DialogTitle>
+
+            <DialogTitle id="add-student">Delete Supplier Receipt</DialogTitle>
             <DialogContent>
-
 
                 <Response showError={error}
                           errorTitle={errorTitle}
                           errorMessage={errorMessage}
                           showSnackBar={show}
-                          successMessage={"Product Find Success"}
-                          closeSnackBar={() => setShow(false)}
+                          successMessage='Supplier Receipt Delete Success'
+                          closeSnackBar={close}
                 />
 
-
-                <br/>
-
                 <Grid container spacing={1}>
+
                     <Grid item md={12} xs={12}>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="Enter Customer Email"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                        <TextField autoFocus
+                                   margin="dense"
+                                   label="Receipt Code"
+                                   type="text"
+                                   fullWidth
+                                   variant="outlined"
+                                   value={code}
+                                   onChange={e => setCode(e.target.value)}
                         />
                     </Grid>
+
+
                 </Grid>
             </DialogContent>
 
             <DialogActions>
 
-                <Button type={"submit"} color='primary' onClick={register}>
-                    Next
+                <Button type={"submit"} color='secondary' onClick={register}>
+                    Delete
                 </Button>
-                <Button onClick={cancel} color='secondary'>
+                <Button onClick={closeDialog} color='primary'  >
                     Cancel
                 </Button>
             </DialogActions>
@@ -109,4 +109,4 @@ const FindCustomer = (
 }
 
 
-export default FindCustomer
+export default DeleteReceipt

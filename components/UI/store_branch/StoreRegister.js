@@ -92,7 +92,6 @@ const StoreRegister = (
             RemoveError(setTelephoneNumberError, setTelephoneNumberErrorMessage)
         }
 
-        alert(error)
         if (!error) {
             const data = {
                 location,

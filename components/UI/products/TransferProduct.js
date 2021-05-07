@@ -54,13 +54,17 @@ const TransferProduct = (
         closeDialog,
         dialog
     }) => {
+
     // For Transfer Dialog
     const classes = useStyles();
     const [checked, setChecked] = useState([]);
+
+    // orig value
     const [left, setLeft] = useState([]);
     const [right, setRight] = useState([]);
 
     const [tempLeft, setTempLeft] = useState([])
+
     const leftChecked = intersection(checked, tempLeft);
     const rightChecked = intersection(checked, right);
 
@@ -72,6 +76,7 @@ const TransferProduct = (
 
     const filterLeft = (value) => {
         setLeftSearch(value)
+
         if (value.length !== 0) {
             const newLeft = left.filter(e => e.productName.toLowerCase().startsWith(leftSearch.length === 0 ? '' : leftSearch.toLowerCase()))
             setTempLeft(newLeft)

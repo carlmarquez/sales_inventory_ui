@@ -17,6 +17,7 @@ import ListIcon from '@material-ui/icons/List';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ErrorIcon from '@material-ui/icons/Error';
 import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
+import ContactMailIcon from '@material-ui/icons/ContactMail';
 const useStyles = makeStyles({
     list: {
         width: 240,
@@ -30,7 +31,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function Sidebar({setPosOn, open, handleDrawerClose, handleDrawerOpen}) {
+export default function Sidebar({setPosOn,user, open, handleDrawerClose, handleDrawerOpen}) {
 
     const classes = useStyles();
 
@@ -74,6 +75,12 @@ export default function Sidebar({setPosOn, open, handleDrawerClose, handleDrawer
                                 <SupervisedUserCircleIcon/>
                             </ListItemIcon>
                             <ListItemText primary="Supplier"/>
+                        </ListItem>
+                        <ListItem component={NavLink} to="/supplierReceipt" button>
+                            <ListItemIcon>
+                                <ContactMailIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Supplier Receipt"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/customer" button>
                             <ListItemIcon>

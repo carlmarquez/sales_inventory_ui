@@ -20,6 +20,7 @@ import AuditTrail from "../UI/AuditTrail/AuditTrail";
 import Settings from "../UI/settings/Settings";
 import CriticalStocks from "../UI/CriticalStock/CriticalStocks";
 import Transfer from "../UI/transferData/Transfer";
+import {SupplierReceipt} from "../UI/supplierReceipt/SupplierReceipt";
 // import Transfer from "../UI/transferData/Transfer";
 
 export default function MainUI({setPosOn,user,setUser}) {
@@ -80,6 +81,9 @@ export default function MainUI({setPosOn,user,setUser}) {
                             <Route exact path={"/transaction"}>
                                 <Transaction user={user}/>
                             </Route>
+                            <Route exact path={'/supplierReceipt'}>
+                                <SupplierReceipt user={user}/>
+                            </Route>
                             <Route path={"/supplier"}>
                                 <Supplier user={user}/>
                             </Route>
@@ -95,7 +99,6 @@ export default function MainUI({setPosOn,user,setUser}) {
                             <Route path={"/settings"}>
                                 <Settings user={user}/>
                             </Route>
-
                         </Switch>
                     </Suspense>
                 }

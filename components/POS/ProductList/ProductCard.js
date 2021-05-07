@@ -6,7 +6,7 @@ const ProductCard = ({classes, price, name, id, picture}) => {
         <Paper className={classes.product} variant={'outlined'}>
             <div className={classes.productTop}>
                 {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
-                <img src={`${serverEndpoint}product/getImage/${picture}`}
+                <img src={`${serverEndpoint}/product/getImage/${picture}`}
                      alt={`Product Picture${id}`}/>
                 <p style={{margin: 0, marginTop: 5}}>{name}</p>
                 <p style={{margin: 0, marginTop: 5}}>{`₱ ${price}`}</p>

@@ -164,6 +164,7 @@ export const Products = ({user}) => {
             />
 
             <UpdateProduct
+                user={user}
                 branch={branch}
                 role={role}
                 images={images}

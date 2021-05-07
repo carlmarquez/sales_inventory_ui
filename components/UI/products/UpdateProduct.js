@@ -11,12 +11,12 @@ import {useState, Fragment, useEffect} from "react";
 import {baseUrlWithAuth} from "../../mainUI/BaseUrlWithAuth";
 import {
     productUpdate,
-} from "../../../utils/ServerEndPoint";
-import {Autocomplete} from "@material-ui/lab";
-import Response from "../../../utils/Response/Response";
-import FindProduct from "./FindProduct";
-import RemoveError from "../../../utils/FormError/RemoveError";
-import CreateError from "../../../utils/FormError/CreateError";
+} from "../../../utils/ServerEndPoint"
+import {Autocomplete} from "@material-ui/lab"
+import Response from "../../../utils/Response/Response"
+import FindProduct from "./FindProduct"
+import RemoveError from "../../../utils/FormError/RemoveError"
+import CreateError from "../../../utils/FormError/CreateError"
 
 
 const ProductRegister = (
@@ -29,7 +29,8 @@ const ProductRegister = (
         reload,
         type,
         role,
-        branch
+        branch,
+        user
     }) => {
 
 
@@ -259,7 +260,7 @@ const ProductRegister = (
                                     />
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={user.role === 3?4: 6} xs={12}>
                                     <FormControl
                                         error={productTypeError}
                                         variant="outlined" margin='dense' fullWidth>
@@ -284,7 +285,7 @@ const ProductRegister = (
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={user.role === 3?4: 6} xs={12}>
                                     <TextField
                                         margin="dense"
                                         label="Product Price"

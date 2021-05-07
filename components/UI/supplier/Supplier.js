@@ -45,7 +45,7 @@ export const Supplier = () => {
         const temp = []
         await baseUrlWithAuth.get(supplierList).then((suppliers) =>
             suppliers.data.map(supplier =>
-                temp.push(insert(supplier.id, supplier.name, supplier.email, supplier.address, supplier.city, supplier.postalCode, supplier.mobile_no, supplier.tel_no,))
+                temp.push(insert(supplier.id, supplier.name, supplier.contactPerson, supplier.email, supplier.address, supplier.city, supplier.postalCode, supplier.mobile_no, supplier.tel_no,))
             )
         )
 

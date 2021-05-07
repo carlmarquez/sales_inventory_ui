@@ -38,7 +38,7 @@ const UpdateSupplier = (
     const [postalCode, setPostalCode] = useState('')
     const [mobileNo, setMobileNo] = useState('')
     const [telNo, setTelNo] = useState('')
-
+    const [contactPerson, setContactPerson] = useState('')
 
     const [findSupplierDialog, setFindSupplierDialog] = useState(false)
 
@@ -63,7 +63,12 @@ const UpdateSupplier = (
         let error = false
         event.preventDefault()
         if (name.trim().length === 0) {
-            alert("Please enter store name")
+            alert("Please Enter Company Name")
+            return
+        }
+
+        if(contactPerson.trim().length === 0){
+            alert("Please Enter A Contact Person")
             return
         }
 
@@ -97,7 +102,8 @@ const UpdateSupplier = (
                 state: state,
                 postalCode: postalCode.length === 0 ? 1 : postalCode,
                 mobile_no: mobileNo,
-                tel_no: telNo
+                tel_no: telNo,
+                contactPerson
             }
 
 
@@ -132,6 +138,7 @@ const UpdateSupplier = (
         setPostalCode(supplier.postalCode)
         setState(supplier.state)
         setTelNo(supplier.tel_no)
+        setContactPerson(supplier.contactPerson)
         setFindSupplierDialog(false)
     }
 
@@ -162,7 +169,7 @@ const UpdateSupplier = (
                             />
 
                             <Grid container spacing={1}>
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={4} xs={12}>
                                     <TextField autoFocus
                                                margin="dense"
                                                label="Supplier Name"
@@ -175,7 +182,19 @@ const UpdateSupplier = (
 
                                 </Grid>
 
-                                <Grid item md={6} xs={12}>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        label="Contact Person"
+                                        type="email"
+                                        fullWidth
+                                        variant="outlined"
+                                        value={contactPerson}
+                                        onChange={(e) => setContactPerson(e.target.value)}
+                                    />
+                                </Grid>
+
+                                <Grid item md={4} xs={12}>
                                     <TextField
                                         error={emailError}
                                         helperText={emailErrorMessage}
