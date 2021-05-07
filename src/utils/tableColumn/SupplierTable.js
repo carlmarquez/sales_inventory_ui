@@ -1,7 +1,11 @@
 export const SupplierTable = [
     {
         name: "name",
-        label: "Name"
+        label: "Company Name"
+    },
+    {
+        name: 'contactPerson',
+        label: "Contact Person"
     },
     {
         name: "email",
@@ -10,7 +14,7 @@ export const SupplierTable = [
     },
     {
         name: "address",
-        label: "Address",
+        label: "Company Address",
     },
     {
         name: "city",
@@ -30,6 +34,6 @@ export const SupplierTable = [
     }
 ];
 
-export function InsertSupplier(id, name,email, address,city, postalCode,mobile_no,telno) {
-    return {id, name,email, address,city, postalCode,mobile_no,telno}
+export function InsertSupplier(id, name,contactPerson,email, address,city, postalCode,mobile_no,telno) {
+    return {id, name,contactPerson,email, address,city, postalCode,mobile_no,telno}
 }

@@ -10,6 +10,7 @@ import {tokenData} from "./utils/ServerEndPoint";
 import Skeleton from "@material-ui/lab/Skeleton";
 import {lazy, useEffect, useState, Fragment,Suspense} from 'react'
 
+
 const MainUi = lazy(() => import(`./components/mainUI/MainUI`));
 const Pos = lazy(() => import(`./components/POS/Pos`))
 const App = () => {
