@@ -56,7 +56,7 @@ export default function Sidebar({setPosOn,user, open, handleDrawerClose, handleD
                             <ListItemIcon>
                                 <DashboardIcon/>
                             </ListItemIcon>
-                            <ListItemText primary="DashBoard"/>
+                            <ListItemText primary="Dashboard"/>
                         </ListItem>
                         <ListItem component={NavLink} to="/products" button>
                             <ListItemIcon>
